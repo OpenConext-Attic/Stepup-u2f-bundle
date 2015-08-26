@@ -1,0 +1,26 @@
+{
+    "name": "surfnet/stepup-u2f-bundle",
+    "license": "Apache-2.0",
+    "description": "The SURFnet Step-up U2F undle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
+    "autoload": {
+        "psr-4": {
+            "Surfnet\\StepupU2fBundle\\": "src"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.4|^7",
+        "symfony/config": "^2.7",
+        "symfony/dependency-injection": "^2.7",
+        "symfony/form": "^2.7",
+        "symfony/framework-bundle": "^2.7",
+        "symfony/http-kernel": "^2.7",
+        "symfony/twig-bridge": "^2.7",
+        "symfony/validator": "^2.7"
+    },
+    "require-dev": {
+        "ibuildings/qa-tools": "~1.1,>=1.1.27",
+        "liip/rmt": "1.1.*",
+        "mockery/mockery": "~0.9"
+    }
+}
