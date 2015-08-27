@@ -80,7 +80,7 @@ final class RegistrationServiceTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response), false)
+            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
             ->andReturn($yubicoRegistration);
 
         $service = new RegistrationService($u2f);

@@ -75,7 +75,7 @@ final class RegistrationService
         $yubicoRequest = new YubicoRegisterRequest($request->challenge, $request->appId);
 
         try {
-            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $response, false);
+            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $response);
         } catch (Error $error) {
             throw ErrorHelper::convertToRegistrationException($error);
         }
