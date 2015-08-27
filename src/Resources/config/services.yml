@@ -1,0 +1,10 @@
+surfnet_stepup_u2f.service.registration:
+    class: Surfnet\StepupU2fBundle\Service\RegistrationService
+    arguments:
+        - @surfnet_stepup_u2f.yubico.u2f
+
+surfnet_stepup_u2f.yubico.u2f:
+    class: u2flib_server\U2F
+    arguments:
+        - ''   # AppID is configured
+        - null # No directory with attestation certs
