@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d908df86c18c570e1ef2678e5cf30970",
+    "hash": "491967d7006f60614b2bd43967bb5600",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1531,6 +1531,37 @@
                 "templating"
             ],
             "time": "2015-08-24 09:51:18"
+        },
+        {
+            "name": "yubico/u2flib-server",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Yubico/php-u2flib-server.git",
+                "reference": "71ad5f0b7c796966da356eecd5b583ac852e92a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Yubico/php-u2flib-server/zipball/71ad5f0b7c796966da356eecd5b583ac852e92a1",
+                "reference": "71ad5f0b7c796966da356eecd5b583ac852e92a1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "Library for U2F implementation",
+            "homepage": "https://developers.yubico.com/php-u2flib-server",
+            "time": "2015-03-03 08:05:16"
         }
     ],
     "packages-dev": [
