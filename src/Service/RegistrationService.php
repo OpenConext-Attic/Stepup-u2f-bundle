@@ -21,12 +21,7 @@ namespace Surfnet\StepupU2fBundle\Service;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\Registration;
-use Surfnet\StepupU2fBundle\Exception\Registration\ClientRegistrationException;
-use Surfnet\StepupU2fBundle\Exception\Registration\PublicKeyDecodingRegistrationException;
-use Surfnet\StepupU2fBundle\Exception\Registration\ResponseNotSignedByDeviceException;
-use Surfnet\StepupU2fBundle\Exception\Registration\UnmatchedRegistrationChallengeException;
-use Surfnet\StepupU2fBundle\Exception\Registration\UntrustedDeviceException;
-use Surfnet\StepupU2fBundle\Yubico\U2f\ErrorHelper;
+use Surfnet\StepupU2fBundle\Exception\LogicException;
 use u2flib_server\Error;
 use u2flib_server\RegisterRequest as YubicoRegisterRequest;
 use u2flib_server\U2F;
@@ -63,12 +58,7 @@ final class RegistrationService
      * @param RegisterRequest  $request The register request that you requested earlier and was used to query the U2F
      *     device.
      * @param RegisterResponse $response The response that the U2F device gave in response to the register request.
-     * @return Registration
-     * @throws ClientRegistrationException
-     * @throws UnmatchedRegistrationChallengeException
-     * @throws PublicKeyDecodingRegistrationException
-     * @throws UntrustedDeviceException
-     * @throws ResponseNotSignedByDeviceException
+     * @return RegistrationVerificationResult
      */
     public function verifyRegistration(RegisterRequest $request, RegisterResponse $response)
     {
@@ -77,13 +67,30 @@ final class RegistrationService
         try {
             $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $response);
         } catch (Error $error) {
-            throw ErrorHelper::convertToRegistrationException($error);
+            switch ($error->getCode()) {
+                case \u2flib_server\ERR_UNMATCHED_CHALLENGE:
+                    return RegistrationVerificationResult::responseChallengeDidNotMatchRequestChallenge();
+                case \u2flib_server\ERR_ATTESTATION_SIGNATURE:
+                    return RegistrationVerificationResult::responseWasNotSignedByDevice();
+                case \u2flib_server\ERR_ATTESTATION_VERIFICATION:
+                    return RegistrationVerificationResult::deviceCannotBeTrusted();
+                case \u2flib_server\ERR_PUBKEY_DECODE:
+                    return RegistrationVerificationResult::publicKeyDecodingFailed();
+                default:
+                    throw new LogicException(
+                        sprintf(
+                            'The Yubico U2F service threw an exception with error code %d that should not occur',
+                            $error->getCode()
+                        ),
+                        $error
+                    );
+            }
         }
 
         $registration = new Registration();
         $registration->keyHandle = $yubicoRegistration->keyHandle;
         $registration->publicKey = $yubicoRegistration->publicKey;
 
-        return $registration;
+        return RegistrationVerificationResult::success($registration);
     }
 }
