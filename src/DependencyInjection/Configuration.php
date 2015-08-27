@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
                                 return !is_string($appId) || parse_url($appId, PHP_URL_SCHEME) !== 'https';
                             }
                         )
-                        ->thenInvalid('surfnet_stepup_u2f.app_id must be a HTTPS URL')
+                        ->thenInvalid('surfnet_stepup_u2f.app_id must be an HTTPS URL')
                     ->end()
                 ->end()
             ->end();
