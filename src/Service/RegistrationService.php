@@ -36,7 +36,7 @@ use u2flib_server\U2F;
 final class RegistrationService
 {
     /**
-     * @var U2F
+     * @var \u2flib_server\U2F
      */
     private $u2fService;
 
