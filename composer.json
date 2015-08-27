@@ -1,7 +1,7 @@
 {
     "name": "surfnet/stepup-u2f-bundle",
     "license": "Apache-2.0",
-    "description": "The SURFnet Step-up U2F undle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
+    "description": "The SURFnet Step-up U2F bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities",
     "autoload": {
         "psr-4": {
             "Surfnet\\StepupU2fBundle\\": "src"
