@@ -50,18 +50,16 @@ public function registerDeviceAction(Request $request)
         return ['form' => $form->createView()];
     }
 
-    if ($response->errorCode !== RegisterResponse::ERROR_CODE_OK) {
-        return ['errorCode' => $response->errorCode];
-    }
-
-    $Resultregistration = $service->verifyRegistration(
+    $result = $service->verifyRegistration(
         $this->get('my.session.bag')->get('request'),
         $response
     );
 
-    if ($registrationResult->wasSuccessful()) {
-        $registration = $registrationResult->getRegistration());
+    if ($result->wasSuccessful()) {
+        $registration = $result->getRegistration());
         // ...
+    } elseif ($result->handleAllErrorMethods()) {
+        // Display an error to the user and allow him/her to retry with a new request
     }
 }
 ```

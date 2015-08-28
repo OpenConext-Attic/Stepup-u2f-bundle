@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupU2fBundle\Service;
 
+use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\Registration;
+use Surfnet\StepupU2fBundle\Exception\DomainException;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
 
 /**
@@ -52,6 +54,14 @@ final class RegistrationVerificationResult
     const STATUS_PUBLIC_KEY_DECODING_FAILED = 4;
 
     /**
+     * The U2F device reported an error.
+     *
+     * @see \Surfnet\StepupU2fBundle\Dto\RegisterResponse::$errorCode
+     * @see \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_* constants
+     */
+    const STATUS_DEVICE_ERROR = 5;
+
+    /**
      * @var int
      */
     private $status;
@@ -62,6 +72,11 @@ final class RegistrationVerificationResult
     private $registration;
 
     /**
+     * @var int|null
+     */
+    private $deviceErrorCode;
+
+    /**
      * @param Registration $registration
      * @return RegistrationVerificationResult
      */
@@ -69,6 +84,31 @@ final class RegistrationVerificationResult
     {
         $result = new self(self::STATUS_SUCCESS);
         $result->registration = $registration;
+
+        return $result;
+    }
+
+    /**
+     * @param int $errorCode
+     * @return RegistrationVerificationResult
+     */
+    public static function deviceReportedError($errorCode)
+    {
+        $validErrorCodes = [
+            RegisterResponse::ERROR_CODE_OK,
+            RegisterResponse::ERROR_CODE_OTHER_ERROR,
+            RegisterResponse::ERROR_CODE_BAD_REQUEST,
+            RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+            RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+            RegisterResponse::ERROR_CODE_TIMEOUT,
+        ];
+
+        if (!in_array($errorCode, $validErrorCodes, true)) {
+            throw new DomainException('Device error code is not one of the known error codes');
+        }
+
+        $result = new self(self::STATUS_DEVICE_ERROR);
+        $result->deviceErrorCode = $errorCode;
 
         return $result;
     }
@@ -136,6 +176,46 @@ final class RegistrationVerificationResult
     /**
      * @return bool
      */
+    public function didDeviceReportABadRequest()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_BAD_REQUEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasClientConfigurationUnsupported()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasDeviceAlreadyRegistered()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceTimeOut()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_TIMEOUT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceReportAnUnknownError()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_OTHER_ERROR);
+    }
+
+    /**
+     * @return bool
+     */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
         return $this->status === self::STATUS_UNMATCHED_REGISTRATION_CHALLENGE;
@@ -163,5 +243,14 @@ final class RegistrationVerificationResult
     public function didPublicKeyDecodingFail()
     {
         return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
+    }
+
+    /**
+     * @param int $errorCode
+     * @return bool
+     */
+    private function didDeviceReportError($errorCode)
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR && $this->deviceErrorCode === $errorCode;
     }
 }
