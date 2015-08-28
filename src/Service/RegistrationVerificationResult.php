@@ -21,6 +21,9 @@ namespace Surfnet\StepupU2fBundle\Service;
 use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 final class RegistrationVerificationResult
 {
     /**
@@ -100,6 +103,14 @@ final class RegistrationVerificationResult
     public static function publicKeyDecodingFailed()
     {
         return new self(self::STATUS_PUBLIC_KEY_DECODING_FAILED);
+    }
+
+    /**
+     * @param int $status
+     */
+    private function __construct($status)
+    {
+        $this->status = $status;
     }
 
     /**
