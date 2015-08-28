@@ -63,3 +63,6 @@ public function registerDeviceAction(Request $request)
     }
 }
 ```
+
+**Note:** Don't display the registration form after an error: the browser or device may immediately respond with the
+same error, causing an infinite form submission loop. Let the user device whether to initiate a new registration.
