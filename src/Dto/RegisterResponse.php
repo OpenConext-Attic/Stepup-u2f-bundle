@@ -21,6 +21,45 @@ namespace Surfnet\StepupU2fBundle\Dto;
 final class RegisterResponse
 {
     /**
+     * Success. Not used in errors but reserved.
+     *
+     * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
+     */
+    const ERROR_CODE_OK = 0;
+
+    /**
+     * An error otherwise not enumerated here.
+     */
+    const ERROR_CODE_OTHER_ERROR = 1;
+
+    /**
+     * The request cannot be processed.
+     */
+    const ERROR_CODE_BAD_REQUEST = 2;
+
+    /**
+     * Client configuration is not supported.
+     */
+    const ERROR_CODE_CONFIGURATION_UNSUPPORTED = 3;
+
+    /**
+     * The presented device is not eligible for this request. For a registration request this may mean that the token is
+     * already registered.
+     */
+    const ERROR_CODE_DEVICE_INELIGIBLE = 4;
+
+    /**
+     * Timeout reached before request could be satisfied.
+     */
+    const ERROR_CODE_TIMEOUT = 5;
+
+    /**
+     * @var int
+     * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
+     */
+    public $errorCode;
+
+    /**
      * @var string
      */
     public $registrationData;
