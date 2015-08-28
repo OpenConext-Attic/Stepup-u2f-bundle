@@ -8,3 +8,7 @@ surfnet_stepup_u2f.yubico.u2f:
     arguments:
         - ''   # AppID is configured
         - null # No directory with attestation certs
+
+surfnet_stepup_u2f.form.register_device:
+    class: Surfnet\StepupU2fBundle\Form\Type\RegisterDeviceType
+    tags: [{ name: form.type, alias: surfnet_stepup_u2f_register_device }]
