@@ -79,8 +79,9 @@ final class RegistrationService
                 default:
                     throw new LogicException(
                         sprintf(
-                            'The Yubico U2F service threw an exception with error code %d that should not occur',
-                            $error->getCode()
+                            'The Yubico U2F service threw an exception with error code %d that should not occur (%s)',
+                            $error->getCode(),
+                            $error->getMessage()
                         ),
                         $error
                     );
