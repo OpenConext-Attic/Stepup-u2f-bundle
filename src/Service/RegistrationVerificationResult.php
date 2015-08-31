@@ -20,7 +20,7 @@ namespace Surfnet\StepupU2fBundle\Service;
 
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\Registration;
-use Surfnet\StepupU2fBundle\Exception\DomainException;
+use Surfnet\StepupU2fBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
 
 /**
@@ -104,7 +104,7 @@ final class RegistrationVerificationResult
         ];
 
         if (!in_array($errorCode, $validErrorCodes, true)) {
-            throw new DomainException('Device error code is not one of the known error codes');
+            throw new InvalidArgumentException('Device error code is not one of the known error codes');
         }
 
         $result = new self(self::STATUS_DEVICE_ERROR);
