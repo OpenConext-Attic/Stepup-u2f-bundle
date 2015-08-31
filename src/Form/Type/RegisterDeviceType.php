@@ -26,9 +26,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class RegisterDeviceType extends AbstractType
 {
-    public function getName()
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return 'surfnet_stepup_u2f_register_device';
+        $builder->add('errorCode', 'hidden', [
+            'attr' => [ 'data-u2f-register-response-field' => 'errorCode' ],
+        ]);
+        $builder->add('registrationData', 'hidden', [
+            'attr' => [ 'data-u2f-register-response-field' => 'registrationData' ],
+        ]);
+        $builder->add('clientData', 'hidden', [
+            'attr' => [ 'data-u2f-register-response-field' => 'clientData' ],
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -53,16 +61,8 @@ final class RegisterDeviceType extends AbstractType
         $view->vars['attr']['data-u2f-register-request'] = json_encode($options['register_request']);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function getName()
     {
-        $builder->add('errorCode', 'hidden', [
-            'attr' => [ 'data-u2f-register-response-field' => 'errorCode' ],
-        ]);
-        $builder->add('registrationData', 'hidden', [
-            'attr' => [ 'data-u2f-register-response-field' => 'registrationData' ],
-        ]);
-        $builder->add('clientData', 'hidden', [
-            'attr' => [ 'data-u2f-register-response-field' => 'clientData' ],
-        ]);
+        return 'surfnet_stepup_u2f_register_device';
     }
 }
