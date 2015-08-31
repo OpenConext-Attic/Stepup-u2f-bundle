@@ -49,6 +49,7 @@ final class RegisterDeviceType extends AbstractType
             $view->vars['attr'] = [];
         }
 
+        $view->vars['attr']['id'] = 'surfnet-stepup-u2f-register-device';
         $view->vars['attr']['data-u2f-register-request'] = json_encode($options['register_request']);
     }
 

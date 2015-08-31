@@ -8,7 +8,7 @@ jQuery(function ($) {
      */
     var ERROR_CODE_OK = 0;
 
-    $('form[data-u2f-register-request]').first().forEach(function () {
+    $('form#surfnet-stepup-u2f-register-device').forEach(function () {
         var $form = $(this),
             $errorCode = $form.find('input[data-u2f-register-response-field="errorCode"]'),
             $registrationData = $form.find('input[data-u2f-register-response-field="registrationData"]'),
