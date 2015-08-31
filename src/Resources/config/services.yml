@@ -3,6 +3,11 @@ surfnet_stepup_u2f.service.registration:
     arguments:
         - @surfnet_stepup_u2f.yubico.u2f
 
+surfnet_stepup_u2f.service.signing:
+    class: Surfnet\StepupU2fBundle\Service\SigningService
+    arguments:
+        - @surfnet_stepup_u2f.yubico.u2f
+
 surfnet_stepup_u2f.yubico.u2f:
     class: u2flib_server\U2F
     arguments:
