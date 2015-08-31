@@ -26,7 +26,7 @@ use u2flib_server\Error;
 
 final class RegistrationServiceTest extends TestCase
 {
-    const APP_ID = 'https://gateway.surfconext.nl/u2f/app-id';
+    const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
     /**
      * @test

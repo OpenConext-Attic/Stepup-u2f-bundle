@@ -41,9 +41,9 @@ final class ConfigurationTest extends TestCase
     public function validAppIds()
     {
         return [
-            'AppID without path' => ['https://gateway.surfconext.nl'],
-            'AppID with root path' => ['https://gateway.surfconext.nl/'],
-            'AppID with path' => ['https://gateway.surfconext.nl/u2f-app-id'],
+            'AppID without path' => ['https://gateway.surfconext.invalid'],
+            'AppID with root path' => ['https://gateway.surfconext.invalid/'],
+            'AppID with path' => ['https://gateway.surfconext.invalid/u2f-app-id'],
         ];
     }
 
@@ -63,8 +63,8 @@ final class ConfigurationTest extends TestCase
     public function invalidAppIds()
     {
         return [
-            'AppID over HTTP' => ['http://gateway.surfconext.nl', 'HTTPS URL'],
-            'AppID over FTP' => ['ftp://gateway.surfconext.nl', 'HTTPS URL'],
+            'AppID over HTTP' => ['http://gateway.surfconext.invalid', 'HTTPS URL'],
+            'AppID over FTP' => ['ftp://gateway.surfconext.invalid', 'HTTPS URL'],
             'integer' => [1, 'HTTPS URL'],
             'null' => [null, 'HTTPS URL'],
             'empty string' => ['', 'HTTPS URL'],
