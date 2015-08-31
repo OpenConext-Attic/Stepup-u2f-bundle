@@ -39,6 +39,9 @@ final class RegisterRequest implements JsonSerializable
 
     public function jsonSerialize()
     {
+        // The array keys below conform to the U2F JavaScript RegisterRequest dictionary
+        // https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html
+        //     #dictionary-registerrequest-members
         return [
             'version'   => $this->version,
             'challenge' => $this->challenge,
