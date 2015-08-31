@@ -62,6 +62,10 @@ final class RegistrationService
      */
     public function verifyRegistration(RegisterRequest $request, RegisterResponse $response)
     {
+        if ($response->errorCode) {
+            return RegistrationVerificationResult::deviceReportedError($response->errorCode);
+        }
+
         $yubicoRequest = new YubicoRegisterRequest($request->challenge, $request->appId);
 
         try {

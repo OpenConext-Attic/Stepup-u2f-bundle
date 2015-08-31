@@ -194,4 +194,54 @@ final class RegistrationServiceTest extends TestCase
             [235789],
         ];
     }
+
+    /**
+     * @test
+     * @group registration
+     * @dataProvider deviceErrorCodes
+     *
+     * @param int $deviceErrorCode
+     * @param string $errorMethod
+     */
+    public function it_handles_device_errors($deviceErrorCode, $errorMethod)
+    {
+        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request->version   = 'U2F_V2';
+        $request->challenge = 'challenge';
+        $request->appId     = self::APP_ID;
+
+        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response->errorCode = $deviceErrorCode;
+
+        $service = new RegistrationService(m::mock('u2flib_server\U2F'));
+        $result = $service->verifyRegistration($request, $response);
+
+        $this->assertTrue($result->$errorMethod(), "Registration result should report $errorMethod() to be true");
+    }
+
+    public function deviceErrorCodes()
+    {
+        return [
+            'didDeviceReportABadRequest' => [
+                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_BAD_REQUEST,
+                'didDeviceReportABadRequest',
+            ],
+            'wasClientConfigurationUnsupported' => [
+                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+                'wasClientConfigurationUnsupported',
+            ],
+            'wasDeviceAlreadyRegistered' => [
+                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+                'wasDeviceAlreadyRegistered',
+            ],
+            'didDeviceTimeOut' => [
+                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_TIMEOUT,
+                'didDeviceTimeOut',
+            ],
+            'didDeviceReportAnUnknownError' => [
+                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_OTHER_ERROR,
+                'didDeviceReportAnUnknownError',
+            ],
+        ];
+    }
 }

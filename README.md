@@ -3,7 +3,7 @@
 
 The SURFnet Step-up U2F Bundle contains server-side device verification, and the necessary forms and resources to enable client-side U2F interaction with Step-up Identities
 
-## Installation
+## Installation and configuration
 
  * Add the package to your Composer file
     ```sh
@@ -15,6 +15,54 @@ The SURFnet Step-up U2F Bundle contains server-side device verification, and the
     public function registerBundles()
     {
         // ...
-        $bundles[] = new Surfnet\StepupU2fBundle\SurfnetStepupU2fBundle;
+        $bundles[] = new Surfnet\StepupU2fBundle\SurfnetStepupU2fBundle();
     }
     ```
+
+## Configuration
+
+### AppID
+
+```yaml
+# config.yml
+surfnet_stepup_u2f:
+    app_id: 'https://application.tld/U2F/AppID'
+```
+
+## Usage
+
+### Registering U2F devices
+
+```php
+/** @Template */
+public function registerDeviceAction(Request $request)
+{
+    $service = $this->get('surfnet_stepup_u2f.service.registration');
+
+    $request = $service->requestRegistration();
+    $response = new RegisterResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_register_device', $response, [
+        'register_request' => $request,
+    ]);
+
+    if (!$form->isValid()) {
+        $this->get('my.session.bag')->set('request', $request);
+        return ['form' => $form->createView()];
+    }
+
+    $result = $service->verifyRegistration(
+        $this->get('my.session.bag')->get('request'),
+        $response
+    );
+
+    if ($result->wasSuccessful()) {
+        $registration = $result->getRegistration());
+        // ...
+    } elseif ($result->handleAllErrorMethods()) {
+        // Display an error to the user and allow him/her to retry with a new request
+    }
+}
+```
+
+**Note:** Don't display the registration form after an error: the browser or device may immediately respond with the
+same error, causing an infinite form submission loop. Let the user device whether to initiate a new registration.
