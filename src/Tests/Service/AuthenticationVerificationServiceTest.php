@@ -20,11 +20,11 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupU2fBundle\Service\SigningService;
-use Surfnet\StepupU2fBundle\Service\SigningVerificationResult;
+use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationService;
+use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
 use u2flib_server\Error;
 
-final class SigningServiceTest extends TestCase
+final class AuthenticationVerificationServiceTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
@@ -61,9 +61,9 @@ final class SigningServiceTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getAuthenticateData')->once()->with([$yubicoRegistration])->andReturn([$yubicoRequest]);
 
-        $service = new SigningService($u2f);
+        $service = new AuthenticationVerificationService($u2f);
 
-        $this->assertEquals($expectedRequest, $service->requestSigning($registration));
+        $this->assertEquals($expectedRequest, $service->requestAuthentication($registration));
     }
 
     /**
@@ -101,7 +101,7 @@ final class SigningServiceTest extends TestCase
         $response->clientData = 'client-data';
         $response->signatureData = 'signature-data';
 
-        $expectedResult = SigningVerificationResult::success();
+        $expectedResult = AuthenticationVerificationResult::success();
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
@@ -109,9 +109,9 @@ final class SigningServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andReturn($yubicoRegistration);
 
-        $service = new SigningService($u2f);
+        $service = new AuthenticationVerificationService($u2f);
 
-        $this->assertEquals($expectedResult, $service->verifySigning($registration, $request, $response));
+        $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
 
     /**
@@ -120,11 +120,11 @@ final class SigningServiceTest extends TestCase
      * @dataProvider expectedVerificationErrors
      *
      * @param int $errorCode
-     * @param SigningVerificationResult $expectedResult
+     * @param AuthenticationVerificationResult $expectedResult
      */
     public function it_handles_expected_u2f_registration_verification_errors(
         $errorCode,
-        SigningVerificationResult $expectedResult
+        AuthenticationVerificationResult $expectedResult
     ) {
         $keyHandle = 'key-handle';
         $challenge = 'challenge';
@@ -161,9 +161,9 @@ final class SigningServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new SigningService($u2f);
+        $service = new AuthenticationVerificationService($u2f);
 
-        $this->assertEquals($expectedResult, $service->verifySigning($registration, $request, $response));
+        $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
 
     public function expectedVerificationErrors()
@@ -174,19 +174,19 @@ final class SigningServiceTest extends TestCase
         return [
             'requestResponseMismatch' => [
                 \u2flib_server\ERR_NO_MATCHING_REQUEST,
-                SigningVerificationResult::requestResponseMismatch()
+                AuthenticationVerificationResult::requestResponseMismatch()
             ],
             'responseRegistrationMismatch' => [
                 \u2flib_server\ERR_NO_MATCHING_REGISTRATION,
-                SigningVerificationResult::responseRegistrationMismatch()
+                AuthenticationVerificationResult::responseRegistrationMismatch()
             ],
             'responseWasNotSignedByDevice' => [
                 \u2flib_server\ERR_AUTHENTICATION_FAILURE,
-                SigningVerificationResult::responseWasNotSignedByDevice()
+                AuthenticationVerificationResult::responseWasNotSignedByDevice()
             ],
             'publicKeyDecodingFailed' => [
                 \u2flib_server\ERR_PUBKEY_DECODE,
-                SigningVerificationResult::publicKeyDecodingFailed()
+                AuthenticationVerificationResult::publicKeyDecodingFailed()
             ],
         ];
     }
@@ -235,10 +235,10 @@ final class SigningServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new SigningService($u2f);
+        $service = new AuthenticationVerificationService($u2f);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
-        $service->verifySigning($registration, $request, $response);
+        $service->verifyAuthentication($registration, $request, $response);
     }
 
     public function unexpectedVerificationErrors()
