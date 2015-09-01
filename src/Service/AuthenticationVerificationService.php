@@ -22,13 +22,12 @@ use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
-use Surfnet\StepupU2fBundle\Yubico\U2f\ErrorHelper;
 use u2flib_server\Error;
 use u2flib_server\Registration as YubicoRegistration;
 use u2flib_server\SignRequest as YubicoSignRequest;
 use u2flib_server\U2F;
 
-final class SigningService
+final class AuthenticationVerificationService
 {
     /**
      * @var \u2flib_server\U2F
@@ -44,7 +43,7 @@ final class SigningService
      * @param Registration $registration
      * @return SignRequest
      */
-    public function requestSigning(Registration $registration)
+    public function requestAuthentication(Registration $registration)
     {
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;
@@ -68,9 +67,9 @@ final class SigningService
      * @param Registration $registration The registration that is to be signed.
      * @param SignRequest  $request The sign request that you requested earlier and was used to query the U2F device.
      * @param SignResponse $response The response that the U2F device gave in response to the sign request.
-     * @return SigningVerificationResult
+     * @return AuthenticationVerificationResult
      */
-    public function verifySigning(Registration $registration, SignRequest $request, SignResponse $response)
+    public function verifyAuthentication(Registration $registration, SignRequest $request, SignResponse $response)
     {
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;
@@ -87,13 +86,13 @@ final class SigningService
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_NO_MATCHING_REQUEST:
-                    return SigningVerificationResult::requestResponseMismatch();
+                    return AuthenticationVerificationResult::requestResponseMismatch();
                 case \u2flib_server\ERR_NO_MATCHING_REGISTRATION:
-                    return SigningVerificationResult::responseRegistrationMismatch();
+                    return AuthenticationVerificationResult::responseRegistrationMismatch();
                 case \u2flib_server\ERR_PUBKEY_DECODE:
-                    return SigningVerificationResult::publicKeyDecodingFailed();
+                    return AuthenticationVerificationResult::publicKeyDecodingFailed();
                 case \u2flib_server\ERR_AUTHENTICATION_FAILURE:
-                    return SigningVerificationResult::responseWasNotSignedByDevice();
+                    return AuthenticationVerificationResult::responseWasNotSignedByDevice();
                 default:
                     throw new LogicException(
                         sprintf(
@@ -106,6 +105,6 @@ final class SigningService
             }
         }
 
-        return SigningVerificationResult::success();
+        return AuthenticationVerificationResult::success();
     }
 }

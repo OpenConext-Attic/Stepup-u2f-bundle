@@ -39,20 +39,20 @@ public function registerDeviceAction(Request $request)
 {
     $service = $this->get('surfnet_stepup_u2f.service.registration');
 
-    $request = $service->requestRegistration();
-    $response = new RegisterResponse();
-    $form = $this->createForm('surfnet_stepup_u2f_register_device', $response, [
-        'register_request' => $request,
+    $registerRequest = $service->requestRegistration();
+    $registerResponse = new RegisterResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_register_device', $registerResponse, [
+        'register_request' => $registerRequest,
     ]);
 
     if (!$form->isValid()) {
-        $this->get('my.session.bag')->set('request', $request);
+        $this->get('my.session.bag')->set('request', $registerRequest);
         return ['form' => $form->createView()];
     }
 
     $result = $service->verifyRegistration(
         $this->get('my.session.bag')->get('request'),
-        $response
+        $registerResponse
     );
 
     if ($result->wasSuccessful()) {
@@ -66,3 +66,38 @@ public function registerDeviceAction(Request $request)
 
 **Note:** Don't display the registration form after an error: the browser or device may immediately respond with the
 same error, causing an infinite form submission loop. Let the user device whether to initiate a new registration.
+
+### Verifying U2F device authentications
+
+```php
+/** @Template */
+public function verifyDeviceAuthenticationAction(Request $request)
+{
+    $service = $this->get('surfnet_stepup_u2f.service.authentication');
+
+    $signRequest = $service->requestAuthentication();
+    $signResponse = new SignResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_verify_device_authentication', $signResponse, [
+        'sign_request' => $signRequest,
+    ]);
+
+    if (!$form->isValid()) {
+        $this->get('my.session.bag')->set('request', $signRequest);
+        return ['form' => $form->createView()];
+    }
+
+    $result = $service->verifyAuthentication(
+        $this->get('my.session.bag')->get('request'),
+        $signResponse
+    );
+
+    if ($result->wasSuccessful()) {
+        // ...
+    } elseif ($result->handleAllErrorMethods()) {
+        // Display an error to the user and allow him/her to retry with a new request
+    }
+}
+```
+
+**Note:** Don't display the authentication form after an error: the browser or device may immediately respond with the
+same error, causing an infinite form submission loop. Let the user device whether to initiate a new authentication.

@@ -24,7 +24,7 @@ use Surfnet\StepupU2fBundle\Exception\LogicException;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-final class SigningVerificationResult
+final class AuthenticationVerificationResult
 {
     /**
      * Registration was a success.
