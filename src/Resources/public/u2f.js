@@ -23,4 +23,21 @@ jQuery(function ($) {
         });
     });
 
+    $('form#surfnet-stepup-u2f-verify-device-authentication').forEach(function () {
+        var $form = $(this),
+            $errorCode = $form.find('input[data-u2f-sign-response-field="errorCode"]'),
+            $keyHandle = $form.find('input[data-u2f-sign-response-field="keyHandle"]'),
+            $signatureData = $form.find('input[data-u2f-sign-response-field="signatureData"]'),
+            $clientData = $form.find('input[data-u2f-sign-response-field="clientData"]'),
+            signRequest = $form.data('u2f-sign-request');
+
+        u2f.sign([signRequest], function (response) {
+            $errorCode.val(response.errorCode || ERROR_CODE_OK);
+            $keyHandle.val(response.keyHandle);
+            $signatureData.val(response.signatureData);
+            $clientData.val(response.clientData);
+            $form.submit();
+        });
+    });
+
 });

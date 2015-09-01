@@ -66,3 +66,38 @@ public function registerDeviceAction(Request $request)
 
 **Note:** Don't display the registration form after an error: the browser or device may immediately respond with the
 same error, causing an infinite form submission loop. Let the user device whether to initiate a new registration.
+
+### Verifying U2F device authentications
+
+```php
+/** @Template */
+public function verifyDeviceAuthenticationAction(Request $request)
+{
+    $service = $this->get('surfnet_stepup_u2f.service.authentication');
+
+    $request = $service->requestAuthentication();
+    $response = new SignResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_verify_device_authentication', $response, [
+        'sign_request' => $request,
+    ]);
+
+    if (!$form->isValid()) {
+        $this->get('my.session.bag')->set('request', $request);
+        return ['form' => $form->createView()];
+    }
+
+    $result = $service->verifyAuthentication(
+        $this->get('my.session.bag')->get('request'),
+        $response
+    );
+
+    if ($result->wasSuccessful()) {
+        // ...
+    } elseif ($result->handleAllErrorMethods()) {
+        // Display an error to the user and allow him/her to retry with a new request
+    }
+}
+```
+
+**Note:** Don't display the authentication form after an error: the browser or device may immediately respond with the
+same error, causing an infinite form submission loop. Let the user device whether to initiate a new authentication.
