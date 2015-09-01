@@ -1,10 +1,5 @@
 surfnet_stepup_u2f.service.registration:
-    class: Surfnet\StepupU2fBundle\Service\RegistrationService
-    arguments:
-        - @surfnet_stepup_u2f.yubico.u2f
-
-surfnet_stepup_u2f.service.authentication:
-    class: Surfnet\StepupU2fBundle\Service\AuthenticationVerificationService
+    class: Surfnet\StepupU2fBundle\Service\U2fService
     arguments:
         - @surfnet_stepup_u2f.yubico.u2f
 

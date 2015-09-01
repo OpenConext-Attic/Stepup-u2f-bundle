@@ -20,11 +20,11 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupU2fBundle\Service\RegistrationService;
+use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult;
 use u2flib_server\Error;
 
-final class RegistrationServiceTest extends TestCase
+final class U2fServiceRegistrationTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
@@ -39,7 +39,7 @@ final class RegistrationServiceTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getRegisterData')->once()->with()->andReturn([$yubicoRequest, []]);
 
-        $service = new RegistrationService($u2f);
+        $service = new U2fService($u2f);
 
         $expectedRequest = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
         $expectedRequest->version   = 'U2F_V2';
@@ -87,7 +87,7 @@ final class RegistrationServiceTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($response))
             ->andReturn($yubicoRegistration);
 
-        $service = new RegistrationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -121,7 +121,7 @@ final class RegistrationServiceTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new RegistrationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -177,7 +177,7 @@ final class RegistrationServiceTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new RegistrationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyRegistration($request, $response);
@@ -213,7 +213,7 @@ final class RegistrationServiceTest extends TestCase
         $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
         $response->errorCode = $deviceErrorCode;
 
-        $service = new RegistrationService(m::mock('u2flib_server\U2F'));
+        $service = new U2fService(m::mock('u2flib_server\U2F'));
         $result = $service->verifyRegistration($request, $response);
 
         $this->assertTrue($result->$errorMethod(), "Registration result should report $errorMethod() to be true");

@@ -20,11 +20,11 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationService;
+use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
 use u2flib_server\Error;
 
-final class AuthenticationVerificationServiceTest extends TestCase
+final class U2fServiceAuthenticationVerificationTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
 
@@ -61,7 +61,7 @@ final class AuthenticationVerificationServiceTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getAuthenticateData')->once()->with([$yubicoRegistration])->andReturn([$yubicoRequest]);
 
-        $service = new AuthenticationVerificationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->assertEquals($expectedRequest, $service->requestAuthentication($registration));
     }
@@ -109,7 +109,7 @@ final class AuthenticationVerificationServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andReturn($yubicoRegistration);
 
-        $service = new AuthenticationVerificationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
@@ -161,7 +161,7 @@ final class AuthenticationVerificationServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new AuthenticationVerificationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
@@ -235,7 +235,7 @@ final class AuthenticationVerificationServiceTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new AuthenticationVerificationService($u2f);
+        $service = new U2fService($u2f);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyAuthentication($registration, $request, $response);
