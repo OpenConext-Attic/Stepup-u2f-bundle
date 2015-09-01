@@ -22,7 +22,6 @@ use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
-use Surfnet\StepupU2fBundle\Yubico\U2f\ErrorHelper;
 use u2flib_server\Error;
 use u2flib_server\Registration as YubicoRegistration;
 use u2flib_server\SignRequest as YubicoSignRequest;
