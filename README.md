@@ -39,20 +39,20 @@ public function registerDeviceAction(Request $request)
 {
     $service = $this->get('surfnet_stepup_u2f.service.registration');
 
-    $request = $service->requestRegistration();
-    $response = new RegisterResponse();
-    $form = $this->createForm('surfnet_stepup_u2f_register_device', $response, [
-        'register_request' => $request,
+    $registerRequest = $service->requestRegistration();
+    $registerResponse = new RegisterResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_register_device', $registerResponse, [
+        'register_request' => $registerRequest,
     ]);
 
     if (!$form->isValid()) {
-        $this->get('my.session.bag')->set('request', $request);
+        $this->get('my.session.bag')->set('request', $registerRequest);
         return ['form' => $form->createView()];
     }
 
     $result = $service->verifyRegistration(
         $this->get('my.session.bag')->get('request'),
-        $response
+        $registerResponse
     );
 
     if ($result->wasSuccessful()) {
@@ -75,20 +75,20 @@ public function verifyDeviceAuthenticationAction(Request $request)
 {
     $service = $this->get('surfnet_stepup_u2f.service.authentication');
 
-    $request = $service->requestAuthentication();
-    $response = new SignResponse();
-    $form = $this->createForm('surfnet_stepup_u2f_verify_device_authentication', $response, [
-        'sign_request' => $request,
+    $signRequest = $service->requestAuthentication();
+    $signResponse = new SignResponse();
+    $form = $this->createForm('surfnet_stepup_u2f_verify_device_authentication', $signResponse, [
+        'sign_request' => $signRequest,
     ]);
 
     if (!$form->isValid()) {
-        $this->get('my.session.bag')->set('request', $request);
+        $this->get('my.session.bag')->set('request', $signRequest);
         return ['form' => $form->createView()];
     }
 
     $result = $service->verifyAuthentication(
         $this->get('my.session.bag')->get('request'),
-        $response
+        $signResponse
     );
 
     if ($result->wasSuccessful()) {
