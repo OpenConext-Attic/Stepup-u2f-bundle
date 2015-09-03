@@ -1,18 +1,20 @@
-surfnet_stepup_u2f.service.registration:
-    class: Surfnet\StepupU2fBundle\Service\U2fService
-    arguments:
-        - @surfnet_stepup_u2f.yubico.u2f
+services:
 
-surfnet_stepup_u2f.yubico.u2f:
-    class: u2flib_server\U2F
-    arguments:
-        - ''   # AppID is configured
-        - null # No directory with attestation certs
+    surfnet_stepup_u2f.service.registration:
+        class: Surfnet\StepupU2fBundle\Service\U2fService
+        arguments:
+            - @surfnet_stepup_u2f.yubico.u2f
 
-surfnet_stepup_u2f.form.register_device:
-    class: Surfnet\StepupU2fBundle\Form\Type\RegisterDeviceType
-    tags: [{ name: form.type, alias: surfnet_stepup_u2f_register_device }]
+    surfnet_stepup_u2f.yubico.u2f:
+        class: u2flib_server\U2F
+        arguments:
+            - ''   # AppID is configured
+            - null # No directory with attestation certs
 
-surfnet_stepup_u2f.form.verify_device_authentication:
-    class: Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType
-    tags: [{ name: form.type, alias: surfnet_stepup_u2f_verify_device_authentication }]
+    surfnet_stepup_u2f.form.register_device:
+        class: Surfnet\StepupU2fBundle\Form\Type\RegisterDeviceType
+        tags: [{ name: form.type, alias: surfnet_stepup_u2f_register_device }]
+
+    surfnet_stepup_u2f.form.verify_device_authentication:
+        class: Surfnet\StepupU2fBundle\Form\Type\VerifyDeviceAuthenticationType
+        tags: [{ name: form.type, alias: surfnet_stepup_u2f_verify_device_authentication }]
