@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupU2fBundle\DependencyInjection;
 
+use Surfnet\StepupU2fBundle\Value\AppId;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,8 +35,11 @@ class SurfnetStepupU2fExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
+        /** @var AppId $appId */
+        $appId = $config['app_id'];
+
         $container
             ->getDefinition('surfnet_stepup_u2f.yubico.u2f')
-            ->replaceArgument(0, $config['app_id']);
+            ->replaceArgument(0, $appId->getAppId());
     }
 }

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupU2fBundle\DependencyInjection;
 
+use Surfnet\StepupU2fBundle\Value\AppId;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -33,19 +34,14 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('surfnet_stepup_u2f');
         $rootNode
             ->children()
-                ->scalarNode('app_id')
+                ->variableNode('app_id')
                     ->info(
                         'This is the URL that identifies this logical application and from where the Trusted Facets ' .
                         'List is served'
                     )
                     ->isRequired()
                     ->validate()
-                        ->ifTrue(
-                            function ($appId) {
-                                return !is_string($appId) || parse_url($appId, PHP_URL_SCHEME) !== 'https';
-                            }
-                        )
-                        ->thenInvalid('surfnet_stepup_u2f.app_id must be an HTTPS URL')
+                        ->always(function ($appId) { return new AppId($appId); })
                     ->end()
                 ->end()
             ->end();
