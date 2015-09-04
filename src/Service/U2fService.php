@@ -75,8 +75,12 @@ class U2fService
 
         $yubicoRequest = new YubicoRegisterRequest($request->challenge, $request->appId);
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->clientData = $response->clientData;
+        $yubicoResponse->registrationData = $response->registrationData;
+
         try {
-            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $response);
+            $yubicoRegistration = $this->u2fService->doRegister($yubicoRequest, $yubicoResponse);
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_UNMATCHED_CHALLENGE:
@@ -155,8 +159,17 @@ class U2fService
         $yubicoRequest->appId     = $request->appId;
         $yubicoRequest->keyHandle = $request->keyHandle;
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->keyHandle     = $response->keyHandle;
+        $yubicoResponse->signatureData = $response->signatureData;
+        $yubicoResponse->clientData    = $response->clientData;
+
         try {
-            $yubicoRegistration = $this->u2fService->doAuthenticate([$yubicoRequest], [$yubicoRegistration], $response);
+            $yubicoRegistration = $this->u2fService->doAuthenticate(
+                [$yubicoRequest],
+                [$yubicoRegistration],
+                $yubicoResponse
+            );
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_NO_MATCHING_REQUEST:
