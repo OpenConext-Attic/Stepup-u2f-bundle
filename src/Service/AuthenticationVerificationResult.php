@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupU2fBundle\Service;
 
-use Surfnet\StepupU2fBundle\Dto\Registration;
-use Surfnet\StepupU2fBundle\Exception\LogicException;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
+use Surfnet\StepupU2fBundle\Exception\InvalidArgumentException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -52,9 +52,22 @@ final class AuthenticationVerificationResult
     const STATUS_PUBLIC_KEY_DECODING_FAILED = 4;
 
     /**
+     * The U2F device reported an error.
+     *
+     * @see \Surfnet\StepupU2fBundle\Dto\SignResponse::$errorCode
+     * @see \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_* constants
+     */
+    const STATUS_DEVICE_ERROR = 5;
+
+    /**
      * @var int
      */
     private $status;
+
+    /**
+     * @var int|null
+     */
+    private $deviceErrorCode;
 
     /**
      * @return self
@@ -62,6 +75,31 @@ final class AuthenticationVerificationResult
     public static function success()
     {
         return new self(self::STATUS_SUCCESS);
+    }
+
+    /**
+     * @param int $errorCode
+     * @return self
+     */
+    public static function deviceReportedError($errorCode)
+    {
+        $validErrorCodes = [
+            SignResponse::ERROR_CODE_OK,
+            SignResponse::ERROR_CODE_OTHER_ERROR,
+            SignResponse::ERROR_CODE_BAD_REQUEST,
+            SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+            SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+            SignResponse::ERROR_CODE_TIMEOUT,
+        ];
+
+        if (!in_array($errorCode, $validErrorCodes, true)) {
+            throw new InvalidArgumentException('Device error code is not one of the known error codes');
+        }
+
+        $result = new self(self::STATUS_DEVICE_ERROR);
+        $result->deviceErrorCode = $errorCode;
+
+        return $result;
     }
 
     /**
@@ -115,6 +153,46 @@ final class AuthenticationVerificationResult
     /**
      * @return bool
      */
+    public function didDeviceReportABadRequest()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_BAD_REQUEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasClientConfigurationUnsupported()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasKeyHandleUnknownToDevice()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceTimeOut()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_TIMEOUT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceReportAnUnknownError()
+    {
+        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_OTHER_ERROR);
+    }
+
+    /**
+     * @return bool
+     */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
         return $this->status === self::STATUS_REQUEST_RESPONSE_MISMATCH;
@@ -142,5 +220,14 @@ final class AuthenticationVerificationResult
     public function didPublicKeyDecodingFail()
     {
         return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
+    }
+
+    /**
+     * @param int $errorCode
+     * @return bool
+     */
+    private function didDeviceReportError($errorCode)
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR && $this->deviceErrorCode === $errorCode;
     }
 }

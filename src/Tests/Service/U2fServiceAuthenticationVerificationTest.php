@@ -252,4 +252,65 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             [235789],
         ];
     }
+
+    /**
+     * @test
+     * @group signing
+     * @dataProvider expectedDeviceErrors
+     *
+     * @param int $deviceErrorCode
+     */
+    public function it_handles_expected_device_errors($deviceErrorCode)
+    {
+        $keyHandle = 'key-handle';
+        $challenge = 'challenge';
+
+        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request->version   = \u2flib_server\U2F_VERSION;
+        $request->challenge = $challenge;
+        $request->appId     = self::APP_ID;
+        $request->keyHandle = $keyHandle;
+
+        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
+        $response->errorCode = $deviceErrorCode;
+        $response->clientData = 'client-data';
+        $response->keyHandle = $keyHandle;
+        $response->signatureData = 'signature-data';
+
+        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration->keyHandle = $keyHandle;
+        $registration->publicKey = 'public-key';
+
+        $u2f = m::mock('u2flib_server\U2F');
+        $u2f->shouldReceive('doAuthenticate')->never();
+
+        $service = new U2fService($u2f);
+
+        $expectedResult = AuthenticationVerificationResult::deviceReportedError($deviceErrorCode);
+        $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
+    }
+
+    public function expectedDeviceErrors()
+    {
+        // Autoload the U2F class to make sure the error constants are loaded which are also defined in the file.
+        class_exists('u2flib_server\U2F');
+
+        return [
+            'ERROR_CODE_OTHER_ERROR' => [
+                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_OTHER_ERROR,
+            ],
+            'ERROR_CODE_BAD_REQUEST' => [
+                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_BAD_REQUEST,
+            ],
+            'ERROR_CODE_CONFIGURATION_UNSUPPORTED' => [
+                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+            ],
+            'ERROR_CODE_DEVICE_INELIGIBLE' => [
+                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+            ],
+            'ERROR_CODE_TIMEOUT' => [
+                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_TIMEOUT,
+            ],
+        ];
+    }
 }

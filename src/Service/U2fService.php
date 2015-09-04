@@ -138,6 +138,10 @@ final class U2fService
      */
     public function verifyAuthentication(Registration $registration, SignRequest $request, SignResponse $response)
     {
+        if ($response->errorCode !== 0) {
+            return AuthenticationVerificationResult::deviceReportedError($response->errorCode);
+        }
+
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;
         $yubicoRegistration->publicKey = $registration->publicKey;
