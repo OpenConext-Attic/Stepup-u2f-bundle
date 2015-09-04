@@ -178,7 +178,7 @@ final class AuthenticationVerificationResult
      */
     public function didDeviceReportABadRequest()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_BAD_REQUEST);
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_BAD_REQUEST);
     }
 
     /**
@@ -186,7 +186,7 @@ final class AuthenticationVerificationResult
      */
     public function wasClientConfigurationUnsupported()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
     }
 
     /**
@@ -194,7 +194,7 @@ final class AuthenticationVerificationResult
      */
     public function wasKeyHandleUnknownToDevice()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE);
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_DEVICE_INELIGIBLE);
     }
 
     /**
@@ -202,7 +202,7 @@ final class AuthenticationVerificationResult
      */
     public function didDeviceTimeOut()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_TIMEOUT);
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_TIMEOUT);
     }
 
     /**
@@ -210,7 +210,7 @@ final class AuthenticationVerificationResult
      */
     public function didDeviceReportAnUnknownError()
     {
-        return $this->didDeviceReportError(RegisterResponse::ERROR_CODE_OTHER_ERROR);
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_OTHER_ERROR);
     }
 
     /**
