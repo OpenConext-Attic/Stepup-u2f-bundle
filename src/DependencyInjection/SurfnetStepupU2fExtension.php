@@ -35,15 +35,12 @@ class SurfnetStepupU2fExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        /** @var AppId $appId */
-        $appId = $config['app_id'];
-
         $container
             ->getDefinition('surfnet_stepup_u2f.yubico.u2f')
-            ->replaceArgument(0, $appId->getAppId());
+            ->replaceArgument(0, $config['app_id']);
 
         $container
-            ->getDefinition('surfnet_stepup_u2f.service.u2f')
-            ->replaceArgument(0, $appId);
+            ->getDefinition('surfnet_stepup_u2f.value.app_id')
+            ->replaceArgument(0, $config['app_id']);
     }
 }

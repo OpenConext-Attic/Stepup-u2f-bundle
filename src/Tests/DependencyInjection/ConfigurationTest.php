@@ -21,7 +21,6 @@ namespace Surfnet\StepupU2fBundle\Tests\DependencyInjection;
 use Matthias\SymfonyConfigTest\PhpUnit\ConfigurationTestCaseTrait;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\StepupU2fBundle\DependencyInjection\Configuration;
-use Surfnet\StepupU2fBundle\Value\AppId;
 
 final class ConfigurationTest extends TestCase
 {
@@ -34,9 +33,9 @@ final class ConfigurationTest extends TestCase
      *
      * @param string $appId
      */
-    public function it_processes_a_valid_app_id($appId)
+    public function it_accepts_a_valid_app_id($appId)
     {
-        $this->assertProcessedConfigurationEquals([['app_id' => $appId]], ['app_id' => new AppId($appId)]);
+        $this->assertConfigurationIsValid([['app_id' => $appId]]);
     }
 
     public function validAppIds()
@@ -64,13 +63,13 @@ final class ConfigurationTest extends TestCase
     public function invalidAppIds()
     {
         return [
-            'AppID over HTTP' => ['http://gateway.surfconext.invalid', 'must be "https"'],
-            'AppID over FTP' => ['ftp://gateway.surfconext.invalid', 'must be "https"'],
-            'integer' => [1, 'should be of type "string"'],
-            'null' => [null, 'should be of type "string"'],
-            'empty string' => ['', 'must be "https"'],
-            'object' => [new \stdClass, 'should be of type "string"'],
-            'array' => [array(), 'should be of type "string"'],
+            'AppID over HTTP' => ['http://gateway.surfconext.invalid', 'HTTPS URL'],
+            'AppID over FTP' => ['ftp://gateway.surfconext.invalid', 'HTTPS URL'],
+            'integer' => [1, 'HTTPS URL'],
+            'null' => [null, 'HTTPS URL'],
+            'empty string' => ['', 'HTTPS URL'],
+            'object' => [new \stdClass, 'Expected scalar'],
+            'array' => [array(), 'Expected scalar'],
         ];
     }
 
