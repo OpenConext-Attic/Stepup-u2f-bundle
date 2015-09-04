@@ -30,7 +30,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      */
     public function it_can_request_signing_of_a_sign_request()
     {
@@ -68,7 +68,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      */
     public function it_can_verify_a_signing_response()
     {
@@ -121,7 +121,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      * @dataProvider expectedVerificationErrors
      *
      * @param int $errorCode
@@ -203,7 +203,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      * @dataProvider unexpectedVerificationErrors
      *
      * @param int $errorCode
@@ -270,7 +270,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
     /**
      * @test
-     * @group signing
+     * @group authentication
      * @dataProvider expectedDeviceErrors
      *
      * @param int $deviceErrorCode
