@@ -216,6 +216,14 @@ final class AuthenticationVerificationResult
     /**
      * @return bool
      */
+    public function didDeviceReportAnyError()
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR;
+    }
+
+    /**
+     * @return bool
+     */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
         return $this->status === self::STATUS_REQUEST_RESPONSE_MISMATCH;
