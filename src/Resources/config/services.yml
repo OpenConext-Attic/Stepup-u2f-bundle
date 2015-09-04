@@ -3,6 +3,7 @@ services:
     surfnet_stepup_u2f.service.u2f:
         class: Surfnet\StepupU2fBundle\Service\U2fService
         arguments:
+            - ''   # AppID is configured
             - @surfnet_stepup_u2f.yubico.u2f
 
     surfnet_stepup_u2f.yubico.u2f:

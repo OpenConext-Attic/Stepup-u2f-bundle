@@ -20,8 +20,9 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult;
+use Surfnet\StepupU2fBundle\Service\U2fService;
+use Surfnet\StepupU2fBundle\Value\AppId;
 use u2flib_server\Error;
 
 final class U2fServiceRegistrationTest extends TestCase
@@ -39,7 +40,7 @@ final class U2fServiceRegistrationTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getRegisterData')->once()->with()->andReturn([$yubicoRequest, []]);
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $expectedRequest = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
         $expectedRequest->version   = 'U2F_V2';
@@ -91,7 +92,7 @@ final class U2fServiceRegistrationTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andReturn($yubicoRegistration);
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -129,7 +130,7 @@ final class U2fServiceRegistrationTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->assertEquals($expectedResult, $service->verifyRegistration($request, $response));
     }
@@ -189,7 +190,7 @@ final class U2fServiceRegistrationTest extends TestCase
             ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyRegistration($request, $response);
@@ -225,7 +226,7 @@ final class U2fServiceRegistrationTest extends TestCase
         $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
         $response->errorCode = $deviceErrorCode;
 
-        $service = new U2fService(m::mock('u2flib_server\U2F'));
+        $service = new U2fService(new AppId(self::APP_ID), m::mock('u2flib_server\U2F'));
         $result = $service->verifyRegistration($request, $response);
 
         $this->assertTrue($result->$errorMethod(), "Registration result should report $errorMethod() to be true");
@@ -255,5 +256,28 @@ final class U2fServiceRegistrationTest extends TestCase
                 'didDeviceReportAnUnknownError',
             ],
         ];
+    }
+
+    /**
+     * @test
+     * @group registration
+     */
+    public function it_rejects_the_registration_when_app_ids_dont_match()
+    {
+        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request->version   = 'U2F_V2';
+        $request->challenge = 'challenge';
+        $request->appId     = 'https://hacker.invalid/epp-aai-die';
+
+        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response->registrationData = 'registration-data';
+        $response->clientData = 'client-data';
+
+        $service = new U2fService(new AppId(self::APP_ID), m::mock('u2flib_server\U2F'));
+
+        $this->assertEquals(
+            RegistrationVerificationResult::appIdMismatch(),
+            $service->verifyRegistration($request, $response)
+        );
     }
 }

@@ -62,6 +62,11 @@ final class AuthenticationVerificationResult
     const STATUS_DEVICE_ERROR = 5;
 
     /**
+     * The AppIDs of the server and a message did not match.
+     */
+    const STATUS_APP_ID_MISMATCH = 6;
+
+    /**
      * @var int
      */
     private $status;
@@ -143,6 +148,14 @@ final class AuthenticationVerificationResult
     public static function publicKeyDecodingFailed()
     {
         return new self(self::STATUS_PUBLIC_KEY_DECODING_FAILED);
+    }
+
+    /**
+     * @return RegistrationVerificationResult
+     */
+    public static function appIdMismatch()
+    {
+        return new self(self::STATUS_APP_ID_MISMATCH);
     }
 
     /**
@@ -251,6 +264,14 @@ final class AuthenticationVerificationResult
     public function didPublicKeyDecodingFail()
     {
         return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function didntAppIdsMatch()
+    {
+        return $this->status === self::STATUS_APP_ID_MISMATCH;
     }
 
     /**

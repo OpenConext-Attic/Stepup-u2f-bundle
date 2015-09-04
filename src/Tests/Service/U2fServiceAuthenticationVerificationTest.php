@@ -20,8 +20,9 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
+use Surfnet\StepupU2fBundle\Service\U2fService;
+use Surfnet\StepupU2fBundle\Value\AppId;
 use u2flib_server\Error;
 
 final class U2fServiceAuthenticationVerificationTest extends TestCase
@@ -61,7 +62,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getAuthenticateData')->once()->with([$yubicoRegistration])->andReturn([$yubicoRequest]);
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->assertEquals($expectedRequest, $service->requestAuthentication($registration));
     }
@@ -114,7 +115,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andReturn($yubicoRegistration);
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
@@ -171,7 +172,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
     }
@@ -250,7 +251,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyAuthentication($registration, $request, $response);
@@ -299,7 +300,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')->never();
 
-        $service = new U2fService($u2f);
+        $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
         $expectedResult = AuthenticationVerificationResult::deviceReportedError($deviceErrorCode);
         $this->assertEquals($expectedResult, $service->verifyAuthentication($registration, $request, $response));
@@ -327,5 +328,36 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
                 \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_TIMEOUT,
             ],
         ];
+    }
+
+    /**
+     * @test
+     * @group authentication
+     */
+    public function it_rejects_the_registration_when_app_ids_dont_match()
+    {
+        $keyHandle = 'key-handle';
+
+        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request->version   = \u2flib_server\U2F_VERSION;
+        $request->challenge = 'challenge';
+        $request->appId     = 'https://hacker.invalid/epp-aai-die';
+        $request->keyHandle = $keyHandle;
+
+        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
+        $response->clientData = 'client-data';
+        $response->keyHandle = $keyHandle;
+        $response->signatureData = 'signature-data';
+
+        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration->keyHandle = $keyHandle;
+        $registration->publicKey = 'public-key';
+
+        $service = new U2fService(new AppId(self::APP_ID), m::mock('u2flib_server\U2F'));
+
+        $this->assertEquals(
+            AuthenticationVerificationResult::appIdMismatch(),
+            $service->verifyAuthentication($registration, $request, $response)
+        );
     }
 }

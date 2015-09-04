@@ -24,6 +24,7 @@ use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Dto\SignRequest;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
+use Surfnet\StepupU2fBundle\Value\AppId;
 use u2flib_server\Error;
 use u2flib_server\RegisterRequest as YubicoRegisterRequest;
 use u2flib_server\Registration as YubicoRegistration;
@@ -40,8 +41,18 @@ class U2fService
      */
     private $u2fService;
 
-    public function __construct(U2F $u2fService)
+    /**
+     * @var AppId
+     */
+    private $appId;
+
+    /**
+     * @param AppId $appId
+     * @param U2F    $u2fService
+     */
+    public function __construct(AppId $appId, U2F $u2fService)
     {
+        $this->appId = $appId;
         $this->u2fService = $u2fService;
     }
 
@@ -69,6 +80,10 @@ class U2fService
      */
     public function verifyRegistration(RegisterRequest $request, RegisterResponse $response)
     {
+        if (!$this->appId->equals(new AppId($request->appId))) {
+            return RegistrationVerificationResult::appIdMismatch();
+        }
+
         if ($response->errorCode) {
             return RegistrationVerificationResult::deviceReportedError($response->errorCode);
         }
@@ -144,6 +159,10 @@ class U2fService
      */
     public function verifyAuthentication(Registration $registration, SignRequest $request, SignResponse $response)
     {
+        if (!$this->appId->equals(new AppId($request->appId))) {
+            return AuthenticationVerificationResult::appIdMismatch();
+        }
+
         if ($response->errorCode !== 0) {
             return AuthenticationVerificationResult::deviceReportedError($response->errorCode);
         }
