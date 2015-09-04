@@ -33,4 +33,9 @@ final class Registration
      * @var string
      */
     public $publicKey;
+
+    /**
+     * @var int
+     */
+    public $signCounter = 0;
 }

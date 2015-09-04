@@ -18,8 +18,10 @@
 
 namespace Surfnet\StepupU2fBundle\Service;
 
+use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupU2fBundle\Exception\LogicException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -65,16 +67,25 @@ final class AuthenticationVerificationResult
     private $status;
 
     /**
+     * @var Registration|null
+     */
+    private $registration;
+
+    /**
      * @var int|null
      */
     private $deviceErrorCode;
 
     /**
+     * @param Registration $registration
      * @return self
      */
-    public static function success()
+    public static function success(Registration $registration)
     {
-        return new self(self::STATUS_SUCCESS);
+        $result = new self(self::STATUS_SUCCESS);
+        $result->registration = $registration;
+
+        return $result;
     }
 
     /**
@@ -148,6 +159,18 @@ final class AuthenticationVerificationResult
     public function wasSuccessful()
     {
         return $this->status === self::STATUS_SUCCESS;
+    }
+
+    /**
+     * @return Registration|null
+     */
+    public function getRegistration()
+    {
+        if (!$this->wasSuccessful()) {
+            throw new LogicException('The authentication was unsuccessful and the registration data is not available');
+        }
+
+        return $this->registration;
     }
 
     /**

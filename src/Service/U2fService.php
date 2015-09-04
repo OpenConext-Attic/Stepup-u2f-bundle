@@ -100,8 +100,9 @@ final class U2fService
         }
 
         $registration = new Registration();
-        $registration->keyHandle = $yubicoRegistration->keyHandle;
-        $registration->publicKey = $yubicoRegistration->publicKey;
+        $registration->keyHandle   = $yubicoRegistration->keyHandle;
+        $registration->publicKey   = $yubicoRegistration->publicKey;
+        $registration->signCounter = $yubicoRegistration->counter;
 
         return RegistrationVerificationResult::success($registration);
     }
@@ -115,6 +116,7 @@ final class U2fService
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;
         $yubicoRegistration->publicKey = $registration->publicKey;
+        $yubicoRegistration->counter   = $registration->signCounter;
 
         /** @var YubicoSignRequest $yubicoRequest */
         list($yubicoRequest) = $this->u2fService->getAuthenticateData([$yubicoRegistration]);
@@ -145,6 +147,7 @@ final class U2fService
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;
         $yubicoRegistration->publicKey = $registration->publicKey;
+        $yubicoRegistration->counter   = $registration->signCounter;
 
         $yubicoRequest = new YubicoSignRequest();
         $yubicoRequest->version   = $request->version;
@@ -153,7 +156,7 @@ final class U2fService
         $yubicoRequest->keyHandle = $request->keyHandle;
 
         try {
-            $this->u2fService->doAuthenticate([$yubicoRequest], [$yubicoRegistration], $response);
+            $yubicoRegistration = $this->u2fService->doAuthenticate([$yubicoRequest], [$yubicoRegistration], $response);
         } catch (Error $error) {
             switch ($error->getCode()) {
                 case \u2flib_server\ERR_NO_MATCHING_REQUEST:
@@ -176,6 +179,11 @@ final class U2fService
             }
         }
 
-        return AuthenticationVerificationResult::success();
+        $registration = new Registration();
+        $registration->keyHandle   = $yubicoRegistration->keyHandle;
+        $registration->publicKey   = $yubicoRegistration->publicKey;
+        $registration->signCounter = $yubicoRegistration->counter;
+
+        return AuthenticationVerificationResult::success($registration);
     }
 }

@@ -101,7 +101,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $response->clientData = 'client-data';
         $response->signatureData = 'signature-data';
 
-        $expectedResult = AuthenticationVerificationResult::success();
+        $expectedResult = AuthenticationVerificationResult::success($registration);
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
