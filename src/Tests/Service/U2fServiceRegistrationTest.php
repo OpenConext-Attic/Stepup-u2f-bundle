@@ -75,6 +75,10 @@ final class U2fServiceRegistrationTest extends TestCase
         $response->registrationData = 'registration-data';
         $response->clientData = 'client-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse->registrationData = $response->registrationData;
+
         $expectedRegistration = new \Surfnet\StepupU2fBundle\Dto\Registration();
         $expectedRegistration->publicKey = $publicId;
         $expectedRegistration->keyHandle = $keyHandle;
@@ -84,7 +88,7 @@ final class U2fServiceRegistrationTest extends TestCase
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andReturn($yubicoRegistration);
 
         $service = new U2fService($u2f);
@@ -115,10 +119,14 @@ final class U2fServiceRegistrationTest extends TestCase
         $response->registrationData = 'registration-data';
         $response->clientData = 'client-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse->registrationData = $response->registrationData;
+
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService($u2f);
@@ -171,10 +179,14 @@ final class U2fServiceRegistrationTest extends TestCase
         $response->registrationData = 'registration-data';
         $response->clientData = 'client-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse->registrationData = $response->registrationData;
+
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doRegister')
             ->once()
-            ->with(m::anyOf($yubicoRequest), m::anyOf($response))
+            ->with(m::anyOf($yubicoRequest), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService($u2f);

@@ -101,12 +101,17 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $response->clientData = 'client-data';
         $response->signatureData = 'signature-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->keyHandle     = $response->keyHandle;
+        $yubicoResponse->signatureData = $response->signatureData;
+        $yubicoResponse->clientData    = $response->clientData;
+
         $expectedResult = AuthenticationVerificationResult::success($registration);
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
             ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
+            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andReturn($yubicoRegistration);
 
         $service = new U2fService($u2f);
@@ -155,10 +160,15 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $response->keyHandle = $keyHandle;
         $response->signatureData = 'signature-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->keyHandle     = $response->keyHandle;
+        $yubicoResponse->signatureData = $response->signatureData;
+        $yubicoResponse->clientData    = $response->clientData;
+
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
             ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
+            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService($u2f);
@@ -229,10 +239,15 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $response->keyHandle = $keyHandle;
         $response->signatureData = 'signature-data';
 
+        $yubicoResponse = new \stdClass;
+        $yubicoResponse->keyHandle     = $response->keyHandle;
+        $yubicoResponse->signatureData = $response->signatureData;
+        $yubicoResponse->clientData    = $response->clientData;
+
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('doAuthenticate')
             ->once()
-            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($response))
+            ->with(m::anyOf([$yubicoRequest]), m::anyOf([$yubicoRegistration]), m::anyOf($yubicoResponse))
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService($u2f);
