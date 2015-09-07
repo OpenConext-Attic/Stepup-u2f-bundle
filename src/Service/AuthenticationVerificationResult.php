@@ -151,7 +151,7 @@ final class AuthenticationVerificationResult
     }
 
     /**
-     * @return RegistrationVerificationResult
+     * @return self
      */
     public static function appIdMismatch()
     {
