@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupU2fBundle\DependencyInjection;
 
-use Surfnet\StepupU2fBundle\Value\AppId;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
