@@ -108,8 +108,10 @@ final class RegistrationVerificationResult
             RegisterResponse::ERROR_CODE_TIMEOUT,
         ];
 
-        if (!in_array($errorCode, $validErrorCodes, true)) {
-            throw new InvalidArgumentException('Device error code is not one of the known error codes');
+        if (!in_array($errorCode, $validErrorCodes)) {
+            throw new InvalidArgumentException(
+                sprintf('Device error code (%s) is not one of the known error codes', $errorCode)
+            );
         }
 
         $result = new self(self::STATUS_DEVICE_ERROR);
