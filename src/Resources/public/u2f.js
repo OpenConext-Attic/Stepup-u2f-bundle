@@ -8,7 +8,7 @@ jQuery(function ($) {
      */
     var ERROR_CODE_OK = 0;
 
-    $('form#surfnet-stepup-u2f-register-device').forEach(function () {
+    $('form#surfnet-stepup-u2f-register-device').each(function () {
         var $form = $(this),
             $errorCode = $form.find('input[data-u2f-register-response-field="errorCode"]'),
             $registrationData = $form.find('input[data-u2f-register-response-field="registrationData"]'),
@@ -23,7 +23,7 @@ jQuery(function ($) {
         });
     });
 
-    $('form#surfnet-stepup-u2f-verify-device-authentication').forEach(function () {
+    $('form#surfnet-stepup-u2f-verify-device-authentication').each(function () {
         var $form = $(this),
             $errorCode = $form.find('input[data-u2f-sign-response-field="errorCode"]'),
             $keyHandle = $form.find('input[data-u2f-sign-response-field="keyHandle"]'),
