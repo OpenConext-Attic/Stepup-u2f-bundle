@@ -36,6 +36,10 @@ final class AppId
             throw InvalidArgumentException::invalidType('string', 'appId', $appId);
         }
 
+        if ($appId !== trim($appId)) {
+            throw new InvalidArgumentException('AppID is invalid; whitespace was found around the AppID URL');
+        }
+
         if (parse_url($appId, PHP_URL_SCHEME) !== 'https') {
             throw new InvalidArgumentException(
                 sprintf(
