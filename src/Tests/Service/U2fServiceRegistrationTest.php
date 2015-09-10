@@ -20,10 +20,15 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
+use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
+use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
+use Surfnet\StepupU2fBundle\Dto\Registration;
 use Surfnet\StepupU2fBundle\Service\RegistrationVerificationResult;
 use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Value\AppId;
 use u2flib_server\Error;
+use u2flib_server\RegisterRequest as YubicoRegisterRequest;
+use u2flib_server\Registration as YubicoRegistration;
 
 final class U2fServiceRegistrationTest extends TestCase
 {
@@ -35,14 +40,14 @@ final class U2fServiceRegistrationTest extends TestCase
      */
     public function it_can_create_a_registration_request()
     {
-        $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoRequest = new YubicoRegisterRequest('challenge', self::APP_ID);
 
         $u2f = m::mock('u2flib_server\U2F');
         $u2f->shouldReceive('getRegisterData')->once()->with()->andReturn([$yubicoRequest, []]);
 
         $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
-        $expectedRequest = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $expectedRequest            = new RegisterRequest();
         $expectedRequest->version   = 'U2F_V2';
         $expectedRequest->challenge = 'challenge';
         $expectedRequest->appId     = self::APP_ID;
@@ -56,31 +61,31 @@ final class U2fServiceRegistrationTest extends TestCase
      */
     public function it_can_register_a_u2f_device()
     {
-        $publicId = 'public-key';
+        $publicId  = 'public-key';
         $keyHandle = 'key-handle';
 
-        $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoRequest = new YubicoRegisterRequest('challenge', self::APP_ID);
 
-        $yubicoRegistration = new \u2flib_server\Registration();
-        $yubicoRegistration->publicKey = $publicId;
-        $yubicoRegistration->keyHandle = $keyHandle;
+        $yubicoRegistration              = new YubicoRegistration();
+        $yubicoRegistration->publicKey   = $publicId;
+        $yubicoRegistration->keyHandle   = $keyHandle;
         $yubicoRegistration->certificate = 'certificate';
-        $yubicoRegistration->counter = 0;
+        $yubicoRegistration->counter     = 0;
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request            = new RegisterRequest();
         $request->version   = 'U2F_V2';
         $request->challenge = 'challenge';
         $request->appId     = self::APP_ID;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response                   = new RegisterResponse();
         $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->clientData       = 'client-data';
 
-        $yubicoResponse = new \stdClass;
-        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse                   = new \stdClass;
+        $yubicoResponse->clientData       = $response->clientData;
         $yubicoResponse->registrationData = $response->registrationData;
 
-        $expectedRegistration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $expectedRegistration            = new Registration();
         $expectedRegistration->publicKey = $publicId;
         $expectedRegistration->keyHandle = $keyHandle;
 
@@ -109,19 +114,19 @@ final class U2fServiceRegistrationTest extends TestCase
         $errorCode,
         RegistrationVerificationResult $expectedResult
     ) {
-        $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoRequest = new YubicoRegisterRequest('challenge', self::APP_ID);
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request            = new RegisterRequest();
         $request->version   = 'U2F_V2';
         $request->challenge = 'challenge';
         $request->appId     = self::APP_ID;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response                   = new RegisterResponse();
         $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->clientData       = 'client-data';
 
-        $yubicoResponse = new \stdClass;
-        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse                   = new \stdClass;
+        $yubicoResponse->clientData       = $response->clientData;
         $yubicoResponse->registrationData = $response->registrationData;
 
         $u2f = m::mock('u2flib_server\U2F');
@@ -169,19 +174,19 @@ final class U2fServiceRegistrationTest extends TestCase
      */
     public function it_throws_unexpected_u2f_registration_verification_errors($errorCode)
     {
-        $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
+        $yubicoRequest = new YubicoRegisterRequest('challenge', self::APP_ID);
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request            = new RegisterRequest();
         $request->version   = 'U2F_V2';
         $request->challenge = 'challenge';
         $request->appId     = self::APP_ID;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response                   = new RegisterResponse();
         $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->clientData       = 'client-data';
 
-        $yubicoResponse = new \stdClass;
-        $yubicoResponse->clientData    = $response->clientData;
+        $yubicoResponse                   = new \stdClass;
+        $yubicoResponse->clientData       = $response->clientData;
         $yubicoResponse->registrationData = $response->registrationData;
 
         $u2f = m::mock('u2flib_server\U2F');
@@ -218,12 +223,12 @@ final class U2fServiceRegistrationTest extends TestCase
      */
     public function it_handles_device_errors($deviceErrorCode, $errorMethod)
     {
-        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request            = new RegisterRequest();
         $request->version   = 'U2F_V2';
         $request->challenge = 'challenge';
         $request->appId     = self::APP_ID;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response            = new RegisterResponse();
         $response->errorCode = $deviceErrorCode;
 
         $service = new U2fService(new AppId(self::APP_ID), m::mock('u2flib_server\U2F'));
@@ -236,23 +241,23 @@ final class U2fServiceRegistrationTest extends TestCase
     {
         return [
             'didDeviceReportABadRequest' => [
-                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_BAD_REQUEST,
+                RegisterResponse::ERROR_CODE_BAD_REQUEST,
                 'didDeviceReportABadRequest',
             ],
             'wasClientConfigurationUnsupported' => [
-                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+                RegisterResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
                 'wasClientConfigurationUnsupported',
             ],
             'wasDeviceAlreadyRegistered' => [
-                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+                RegisterResponse::ERROR_CODE_DEVICE_INELIGIBLE,
                 'wasDeviceAlreadyRegistered',
             ],
             'didDeviceTimeOut' => [
-                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_TIMEOUT,
+                RegisterResponse::ERROR_CODE_TIMEOUT,
                 'didDeviceTimeOut',
             ],
             'didDeviceReportAnUnknownError' => [
-                \Surfnet\StepupU2fBundle\Dto\RegisterResponse::ERROR_CODE_OTHER_ERROR,
+                RegisterResponse::ERROR_CODE_OTHER_ERROR,
                 'didDeviceReportAnUnknownError',
             ],
         ];
@@ -264,14 +269,14 @@ final class U2fServiceRegistrationTest extends TestCase
      */
     public function it_rejects_the_registration_when_app_ids_dont_match()
     {
-        $request = new \Surfnet\StepupU2fBundle\Dto\RegisterRequest();
+        $request            = new RegisterRequest();
         $request->version   = 'U2F_V2';
         $request->challenge = 'challenge';
         $request->appId     = 'https://hacker.invalid/epp-aai-die';
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\RegisterResponse();
+        $response                   = new RegisterResponse();
         $response->registrationData = 'registration-data';
-        $response->clientData = 'client-data';
+        $response->clientData       = 'client-data';
 
         $service = new U2fService(new AppId(self::APP_ID), m::mock('u2flib_server\U2F'));
 
