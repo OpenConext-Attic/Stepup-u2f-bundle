@@ -43,7 +43,7 @@ final class AppId
         if (parse_url($appId, PHP_URL_SCHEME) !== 'https') {
             throw new InvalidArgumentException(
                 sprintf(
-                    'Invalid Argument, AppID\'s scheme must be "https", "%s" given',
+                    'Invalid Argument, the AppID scheme must be "https", "%s" given',
                     parse_url($appId, PHP_URL_SCHEME)
                 )
             );
