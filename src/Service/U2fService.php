@@ -199,6 +199,8 @@ class U2fService
                     return AuthenticationVerificationResult::publicKeyDecodingFailed();
                 case \u2flib_server\ERR_AUTHENTICATION_FAILURE:
                     return AuthenticationVerificationResult::responseWasNotSignedByDevice();
+                case \u2flib_server\ERR_COUNTER_TOO_LOW:
+                    return AuthenticationVerificationResult::signCounterTooLow();
                 default:
                     throw new LogicException(
                         sprintf(

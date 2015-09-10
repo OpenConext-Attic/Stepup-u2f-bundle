@@ -360,4 +360,40 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             $service->verifyAuthentication($registration, $request, $response)
         );
     }
+
+    /**
+     * @test
+     * @group authentication
+     */
+    public function it_checks_the_sign_responses_counter_against_the_registrations_counter()
+    {
+        $keyHandle = 'key-handle';
+
+        $request            = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request->version   = \u2flib_server\U2F_VERSION;
+        $request->challenge = 'challenge';
+        $request->appId     = self::APP_ID;
+        $request->keyHandle = $keyHandle;
+
+        $response                = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
+        $response->clientData    = 'client-data';
+        $response->keyHandle     = $keyHandle;
+        $response->signatureData = 'signature-data';
+
+        $registration            = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration->keyHandle = $keyHandle;
+        $registration->publicKey = 'public-key';
+
+        $u2fService = m::mock('u2flib_server\U2F');
+        $u2fService->shouldReceive('doAuthenticate')->andThrow(
+            new Error('Counter too low.', \u2flib_server\ERR_COUNTER_TOO_LOW)
+        );
+
+        $service = new U2fService(new AppId(self::APP_ID), $u2fService);
+
+        $this->assertEquals(
+            AuthenticationVerificationResult::signCounterTooLow(),
+            $service->verifyAuthentication($registration, $request, $response)
+        );
+    }
 }

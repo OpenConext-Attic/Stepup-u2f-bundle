@@ -67,6 +67,11 @@ final class AuthenticationVerificationResult
     const STATUS_APP_ID_MISMATCH = 6;
 
     /**
+     * The sign response's counter was lower than the given registration's sign counter.
+     */
+    const STATUS_SIGN_COUNTER_TOO_LOW = 7;
+
+    /**
      * @var int
      */
     private $status;
@@ -156,6 +161,14 @@ final class AuthenticationVerificationResult
     public static function appIdMismatch()
     {
         return new self(self::STATUS_APP_ID_MISMATCH);
+    }
+
+    /**
+     * @return self
+     */
+    public static function signCounterTooLow()
+    {
+        return new self(self::STATUS_SIGN_COUNTER_TOO_LOW);
     }
 
     /**
@@ -272,6 +285,14 @@ final class AuthenticationVerificationResult
     public function didntAppIdsMatch()
     {
         return $this->status === self::STATUS_APP_ID_MISMATCH;
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasSignCounterTooLow()
+    {
+        return $this->status === self::STATUS_SIGN_COUNTER_TOO_LOW;
     }
 
     /**
