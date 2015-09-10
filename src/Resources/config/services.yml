@@ -1,6 +1,7 @@
 services:
 
     surfnet_stepup_u2f.value.app_id:
+        public: false
         class: Surfnet\StepupU2fBundle\Value\AppId
         arguments:
              - '' # AppID is configured
