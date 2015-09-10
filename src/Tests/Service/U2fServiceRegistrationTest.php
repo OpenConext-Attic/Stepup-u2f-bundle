@@ -169,6 +169,7 @@ final class U2fServiceRegistrationTest extends TestCase
      * @test
      * @group registration
      * @dataProvider unexpectedVerificationErrors
+     * @expectedException \Surfnet\StepupU2fBundle\Exception\LogicException
      *
      * @param int $errorCode
      */
@@ -196,8 +197,6 @@ final class U2fServiceRegistrationTest extends TestCase
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService(new AppId(self::APP_ID), $u2f);
-
-        $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyRegistration($request, $response);
     }
 

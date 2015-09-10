@@ -211,6 +211,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
      * @test
      * @group authentication
      * @dataProvider unexpectedVerificationErrors
+     * @expectedException \Surfnet\StepupU2fBundle\Exception\LogicException
      *
      * @param int $errorCode
      */
@@ -257,8 +258,6 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
             ->andThrow(new Error('error', $errorCode));
 
         $service = new U2fService(new AppId(self::APP_ID), $u2f);
-
-        $this->setExpectedExceptionRegExp('Surfnet\StepupU2fBundle\Exception\LogicException');
         $service->verifyAuthentication($registration, $request, $response);
     }
 
