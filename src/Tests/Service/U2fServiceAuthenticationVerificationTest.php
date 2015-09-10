@@ -20,10 +20,15 @@ namespace Surfnet\StepupU2fBundle\Tests\Service;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
+use Surfnet\StepupU2fBundle\Dto\Registration;
+use Surfnet\StepupU2fBundle\Dto\SignRequest;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
 use Surfnet\StepupU2fBundle\Service\AuthenticationVerificationResult;
 use Surfnet\StepupU2fBundle\Service\U2fService;
 use Surfnet\StepupU2fBundle\Value\AppId;
 use u2flib_server\Error;
+use u2flib_server\Registration as YubicoRegistration;
+use u2flib_server\SignRequest as YubicoSignRequest;
 
 final class U2fServiceAuthenticationVerificationTest extends TestCase
 {
@@ -39,21 +44,21 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $challenge = 'challenge';
         $publicKey = 'public-key';
 
-        $yubicoRequest = new \u2flib_server\SignRequest();
-        $yubicoRequest->version = \u2flib_server\U2F_VERSION;
-        $yubicoRequest->appId = self::APP_ID;
+        $yubicoRequest            = new YubicoSignRequest();
+        $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
+        $yubicoRequest->appId     = self::APP_ID;
         $yubicoRequest->keyHandle = $keyHandle;
         $yubicoRequest->challenge = $challenge;
 
-        $yubicoRegistration = new \u2flib_server\Registration();
+        $yubicoRegistration            = new YubicoRegistration();
         $yubicoRegistration->publicKey = $publicKey;
         $yubicoRegistration->keyHandle = $keyHandle;
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = $publicKey;
 
-        $expectedRequest = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $expectedRequest            = new SignRequest();
         $expectedRequest->version   = \u2flib_server\U2F_VERSION;
         $expectedRequest->challenge = $challenge;
         $expectedRequest->appId     = self::APP_ID;
@@ -77,32 +82,32 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $keyHandle = 'key-handle';
         $challenge = 'challenge';
 
-        $yubicoRequest = new \u2flib_server\SignRequest();
-        $yubicoRequest->version = \u2flib_server\U2F_VERSION;
-        $yubicoRequest->appId = self::APP_ID;
+        $yubicoRequest            = new YubicoSignRequest();
+        $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
+        $yubicoRequest->appId     = self::APP_ID;
         $yubicoRequest->keyHandle = $keyHandle;
         $yubicoRequest->challenge = $challenge;
 
-        $yubicoRegistration = new \u2flib_server\Registration();
+        $yubicoRegistration            = new YubicoRegistration();
         $yubicoRegistration->publicKey = $publicKey;
         $yubicoRegistration->keyHandle = $keyHandle;
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = $publicKey;
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = $challenge;
         $request->appId     = self::APP_ID;
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
-        $response->keyHandle = $keyHandle;
-        $response->clientData = 'client-data';
+        $response                = new SignResponse();
+        $response->keyHandle     = $keyHandle;
+        $response->clientData    = 'client-data';
         $response->signatureData = 'signature-data';
 
-        $yubicoResponse = new \stdClass;
+        $yubicoResponse                = new \stdClass;
         $yubicoResponse->keyHandle     = $response->keyHandle;
         $yubicoResponse->signatureData = $response->signatureData;
         $yubicoResponse->clientData    = $response->clientData;
@@ -136,32 +141,32 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $challenge = 'challenge';
         $publicKey = 'public-key';
 
-        $yubicoRequest = new \u2flib_server\SignRequest();
+        $yubicoRequest            = new YubicoSignRequest();
         $yubicoRequest->keyHandle = $keyHandle;
         $yubicoRequest->appId     = self::APP_ID;
         $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
         $yubicoRequest->challenge = $challenge;
 
-        $yubicoRegistration = new \u2flib_server\Registration();
+        $yubicoRegistration            = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $keyHandle;
         $yubicoRegistration->publicKey = $publicKey;
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = $publicKey;
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = $challenge;
         $request->appId     = self::APP_ID;
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
+        $response                = new SignResponse();
+        $response->clientData    = 'client-data';
+        $response->keyHandle     = $keyHandle;
         $response->signatureData = 'signature-data';
 
-        $yubicoResponse = new \stdClass;
+        $yubicoResponse                = new \stdClass;
         $yubicoResponse->keyHandle     = $response->keyHandle;
         $yubicoResponse->signatureData = $response->signatureData;
         $yubicoResponse->clientData    = $response->clientData;
@@ -215,32 +220,32 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $keyHandle = 'key-handle';
         $publicKey = 'public-key';
 
-        $yubicoRequest = new \u2flib_server\SignRequest();
+        $yubicoRequest            = new YubicoSignRequest();
         $yubicoRequest->challenge = $challenge;
         $yubicoRequest->keyHandle = $keyHandle;
         $yubicoRequest->appId     = self::APP_ID;
         $yubicoRequest->version   = \u2flib_server\U2F_VERSION;
 
-        $yubicoRegistration = new \u2flib_server\Registration();
+        $yubicoRegistration            = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $keyHandle;
         $yubicoRegistration->publicKey = $publicKey;
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = $publicKey;
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = $challenge;
         $request->appId     = self::APP_ID;
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
+        $response                = new SignResponse();
+        $response->clientData    = 'client-data';
+        $response->keyHandle     = $keyHandle;
         $response->signatureData = 'signature-data';
 
-        $yubicoResponse = new \stdClass;
+        $yubicoResponse                = new \stdClass;
         $yubicoResponse->keyHandle     = $response->keyHandle;
         $yubicoResponse->signatureData = $response->signatureData;
         $yubicoResponse->clientData    = $response->clientData;
@@ -281,19 +286,19 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
         $keyHandle = 'key-handle';
         $challenge = 'challenge';
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = $challenge;
         $request->appId     = self::APP_ID;
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
-        $response->errorCode = $deviceErrorCode;
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
+        $response                = new SignResponse();
+        $response->errorCode     = $deviceErrorCode;
+        $response->clientData    = 'client-data';
+        $response->keyHandle     = $keyHandle;
         $response->signatureData = 'signature-data';
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = 'public-key';
 
@@ -313,19 +318,19 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
         return [
             'ERROR_CODE_OTHER_ERROR' => [
-                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_OTHER_ERROR,
+                SignResponse::ERROR_CODE_OTHER_ERROR,
             ],
             'ERROR_CODE_BAD_REQUEST' => [
-                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_BAD_REQUEST,
+                SignResponse::ERROR_CODE_BAD_REQUEST,
             ],
             'ERROR_CODE_CONFIGURATION_UNSUPPORTED' => [
-                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+                SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
             ],
             'ERROR_CODE_DEVICE_INELIGIBLE' => [
-                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+                SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
             ],
             'ERROR_CODE_TIMEOUT' => [
-                \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_TIMEOUT,
+                SignResponse::ERROR_CODE_TIMEOUT,
             ],
         ];
     }
@@ -338,18 +343,18 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
     {
         $keyHandle = 'key-handle';
 
-        $request = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = 'challenge';
         $request->appId     = 'https://hacker.invalid/epp-aai-die';
         $request->keyHandle = $keyHandle;
 
-        $response = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
-        $response->clientData = 'client-data';
-        $response->keyHandle = $keyHandle;
+        $response                = new SignResponse();
+        $response->clientData    = 'client-data';
+        $response->keyHandle     = $keyHandle;
         $response->signatureData = 'signature-data';
 
-        $registration = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = 'public-key';
 
@@ -369,18 +374,18 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
     {
         $keyHandle = 'key-handle';
 
-        $request            = new \Surfnet\StepupU2fBundle\Dto\SignRequest();
+        $request            = new SignRequest();
         $request->version   = \u2flib_server\U2F_VERSION;
         $request->challenge = 'challenge';
         $request->appId     = self::APP_ID;
         $request->keyHandle = $keyHandle;
 
-        $response                = new \Surfnet\StepupU2fBundle\Dto\SignResponse();
+        $response                = new SignResponse();
         $response->clientData    = 'client-data';
         $response->keyHandle     = $keyHandle;
         $response->signatureData = 'signature-data';
 
-        $registration            = new \Surfnet\StepupU2fBundle\Dto\Registration();
+        $registration            = new Registration();
         $registration->keyHandle = $keyHandle;
         $registration->publicKey = 'public-key';
 
