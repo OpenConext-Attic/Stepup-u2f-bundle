@@ -33,7 +33,7 @@ final class U2fServiceRegistrationTest extends TestCase
      * @test
      * @group registration
      */
-    public function it_can_request_registration_of_a_u2f_device()
+    public function it_can_create_a_registration_request()
     {
         $yubicoRequest = new \u2flib_server\RegisterRequest('challenge', self::APP_ID);
 
@@ -47,7 +47,7 @@ final class U2fServiceRegistrationTest extends TestCase
         $expectedRequest->challenge = 'challenge';
         $expectedRequest->appId     = self::APP_ID;
 
-        $this->assertEquals($expectedRequest, $service->requestRegistration());
+        $this->assertEquals($expectedRequest, $service->createRegistrationRequest());
     }
 
     /**

@@ -59,7 +59,7 @@ class U2fService
     /**
      * @return RegisterRequest
      */
-    public function requestRegistration()
+    public function createRegistrationRequest()
     {
         /** @var YubicoRegisterRequest $yubicoRequest */
         list($yubicoRequest) = $this->u2fService->getRegisterData();
