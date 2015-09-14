@@ -54,10 +54,10 @@ final class RegisterResponse
     const ERROR_CODE_TIMEOUT = 5;
 
     /**
-     * @var numeric
+     * @var numeric|null
      * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
      */
-    public $errorCode = self::ERROR_CODE_OK;
+    public $errorCode;
 
     /**
      * @var string

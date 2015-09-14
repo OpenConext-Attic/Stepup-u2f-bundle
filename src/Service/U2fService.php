@@ -84,7 +84,7 @@ class U2fService
             return RegistrationVerificationResult::appIdMismatch();
         }
 
-        if ($response->errorCode) {
+        if ($response->errorCode > 0) {
             return RegistrationVerificationResult::deviceReportedError($response->errorCode);
         }
 
@@ -163,7 +163,7 @@ class U2fService
             return AuthenticationVerificationResult::appIdMismatch();
         }
 
-        if ($response->errorCode !== 0) {
+        if ($response->errorCode > 0) {
             return AuthenticationVerificationResult::deviceReportedError($response->errorCode);
         }
 
