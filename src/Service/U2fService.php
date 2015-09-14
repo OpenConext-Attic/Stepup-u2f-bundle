@@ -130,7 +130,7 @@ class U2fService
      * @param Registration $registration
      * @return SignRequest
      */
-    public function requestAuthentication(Registration $registration)
+    public function createSignRequest(Registration $registration)
     {
         $yubicoRegistration = new YubicoRegistration();
         $yubicoRegistration->keyHandle = $registration->keyHandle;

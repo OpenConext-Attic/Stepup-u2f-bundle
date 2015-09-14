@@ -69,7 +69,7 @@ final class U2fServiceAuthenticationVerificationTest extends TestCase
 
         $service = new U2fService(new AppId(self::APP_ID), $u2f);
 
-        $this->assertEquals($expectedRequest, $service->requestAuthentication($registration));
+        $this->assertEquals($expectedRequest, $service->createSignRequest($registration));
     }
 
     /**
