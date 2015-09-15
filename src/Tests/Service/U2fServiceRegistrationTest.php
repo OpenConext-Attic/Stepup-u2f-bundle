@@ -30,6 +30,10 @@ use u2flib_server\Error;
 use u2flib_server\RegisterRequest as YubicoRegisterRequest;
 use u2flib_server\Registration as YubicoRegistration;
 
+/**
+ * These tests also assert that DTO mapping takes place correctly, serving as a smoke test. Moving these to a separate
+ * test case would only introduce a lot of test duplication.
+ */
 final class U2fServiceRegistrationTest extends TestCase
 {
     const APP_ID = 'https://gateway.surfconext.invalid/u2f/app-id';
