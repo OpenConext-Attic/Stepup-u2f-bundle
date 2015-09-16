@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupU2fBundle\Dto;
 
+use Symfony\Component\Validator\Constraints as Assert;
+use Surfnet\StepupU2fBundle\Validator\Constraints as U2fAssert;
+
 final class SignResponse
 {
     /**
@@ -53,22 +56,32 @@ final class SignResponse
     const ERROR_CODE_TIMEOUT = 5;
 
     /**
+     * @Assert\NotBlank(message="Sign request error code may not be empty")
+     * @Assert\Type("numeric", message="Sign request error code must be numeric")
+     *
      * @var numeric|null
      * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
      */
     public $errorCode;
 
     /**
+     * @Assert\NotBlank(message="Sign request key handle may not be empty")
+     * @Assert\Type("string", message="Sign request key handle must be a string")
+     *
      * @var string
      */
     public $keyHandle;
 
     /**
+     * @U2fAssert\SignatureDataConstraint
+     *
      * @var string
      */
     public $signatureData;
 
     /**
+     * @U2fAssert\ClientDataConstraint
+     *
      * @var string
      */
     public $clientData;

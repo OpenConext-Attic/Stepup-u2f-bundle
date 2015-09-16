@@ -19,25 +19,38 @@
 namespace Surfnet\StepupU2fBundle\Dto;
 
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class SignRequest implements JsonSerializable
 {
     /**
+     * @Assert\NotBlank(message="Sign request version may not be empty")
+     * @Assert\Type("string", message="Sign request version must be a string")
+     *
      * @var string
      */
     public $version;
 
     /**
+     * @Assert\NotBlank(message="Sign request challenge may not be empty")
+     * @Assert\Type("string", message="Sign request challenge must be a string")
+     *
      * @var string
      */
     public $challenge;
 
     /**
+     * @Assert\NotBlank(message="Sign request AppID may not be empty")
+     * @Assert\Type("string", message="Sign request AppID must be a string")
+     *
      * @var string
      */
     public $appId;
 
     /**
+     * @Assert\NotBlank(message="Sign request key handle may not be empty")
+     * @Assert\Type("string", message="Sign request key handle must be a string")
+     *
      * @var string
      */
     public $keyHandle;
