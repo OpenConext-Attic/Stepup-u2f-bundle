@@ -55,7 +55,7 @@ final class ConfigurationTest extends TestCase
      * @param mixed $appId
      * @param string $partOfExpectedMessage
      */
-    public function it_accepts_a_invalid_app_id($appId, $partOfExpectedMessage)
+    public function it_rejects_an_invalid_app_id($appId, $partOfExpectedMessage)
     {
         $this->assertConfigurationIsInvalid([['app_id' => $appId]], $partOfExpectedMessage);
     }

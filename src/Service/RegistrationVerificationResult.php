@@ -62,6 +62,11 @@ final class RegistrationVerificationResult
     const STATUS_DEVICE_ERROR = 5;
 
     /**
+     * The AppIDs of the server and a message did not match.
+     */
+    const STATUS_APP_ID_MISMATCH = 6;
+
+    /**
      * @var int
      */
     private $status;
@@ -103,8 +108,10 @@ final class RegistrationVerificationResult
             RegisterResponse::ERROR_CODE_TIMEOUT,
         ];
 
-        if (!in_array($errorCode, $validErrorCodes, true)) {
-            throw new InvalidArgumentException('Device error code is not one of the known error codes');
+        if (!in_array($errorCode, $validErrorCodes)) {
+            throw new InvalidArgumentException(
+                sprintf('Device error code (%s) is not one of the known error codes', $errorCode)
+            );
         }
 
         $result = new self(self::STATUS_DEVICE_ERROR);
@@ -143,6 +150,14 @@ final class RegistrationVerificationResult
     public static function publicKeyDecodingFailed()
     {
         return new self(self::STATUS_PUBLIC_KEY_DECODING_FAILED);
+    }
+
+    /**
+     * @return RegistrationVerificationResult
+     */
+    public static function appIdMismatch()
+    {
+        return new self(self::STATUS_APP_ID_MISMATCH);
     }
 
     /**
@@ -216,6 +231,14 @@ final class RegistrationVerificationResult
     /**
      * @return bool
      */
+    public function didDeviceReportAnyError()
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR;
+    }
+
+    /**
+     * @return bool
+     */
     public function didResponseChallengeNotMatchRequestChallenge()
     {
         return $this->status === self::STATUS_UNMATCHED_REGISTRATION_CHALLENGE;
@@ -243,6 +266,14 @@ final class RegistrationVerificationResult
     public function didPublicKeyDecodingFail()
     {
         return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function didntAppIdsMatch()
+    {
+        return $this->status === self::STATUS_APP_ID_MISMATCH;
     }
 
     /**

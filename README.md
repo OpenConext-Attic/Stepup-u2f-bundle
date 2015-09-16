@@ -37,7 +37,7 @@ surfnet_stepup_u2f:
 /** @Template */
 public function registerDeviceAction(Request $request)
 {
-    $service = $this->get('surfnet_stepup_u2f.service.registration');
+    $service = $this->get('surfnet_stepup_u2f.service.u2f');
 
     $registerRequest = $service->requestRegistration();
     $registerResponse = new RegisterResponse();

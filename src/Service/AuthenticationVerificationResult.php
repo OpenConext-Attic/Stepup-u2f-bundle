@@ -19,6 +19,8 @@
 namespace Surfnet\StepupU2fBundle\Service;
 
 use Surfnet\StepupU2fBundle\Dto\Registration;
+use Surfnet\StepupU2fBundle\Dto\SignResponse;
+use Surfnet\StepupU2fBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
 
 /**
@@ -52,16 +54,73 @@ final class AuthenticationVerificationResult
     const STATUS_PUBLIC_KEY_DECODING_FAILED = 4;
 
     /**
+     * The U2F device reported an error.
+     *
+     * @see \Surfnet\StepupU2fBundle\Dto\SignResponse::$errorCode
+     * @see \Surfnet\StepupU2fBundle\Dto\SignResponse::ERROR_CODE_* constants
+     */
+    const STATUS_DEVICE_ERROR = 5;
+
+    /**
+     * The AppIDs of the server and a message did not match.
+     */
+    const STATUS_APP_ID_MISMATCH = 6;
+
+    /**
+     * The sign response's counter was lower than the given registration's sign counter.
+     */
+    const STATUS_SIGN_COUNTER_TOO_LOW = 7;
+
+    /**
      * @var int
      */
     private $status;
 
     /**
+     * @var Registration|null
+     */
+    private $registration;
+
+    /**
+     * @var int|null
+     */
+    private $deviceErrorCode;
+
+    /**
+     * @param Registration $registration
      * @return self
      */
-    public static function success()
+    public static function success(Registration $registration)
     {
-        return new self(self::STATUS_SUCCESS);
+        $result = new self(self::STATUS_SUCCESS);
+        $result->registration = $registration;
+
+        return $result;
+    }
+
+    /**
+     * @param int $errorCode
+     * @return self
+     */
+    public static function deviceReportedError($errorCode)
+    {
+        $validErrorCodes = [
+            SignResponse::ERROR_CODE_OK,
+            SignResponse::ERROR_CODE_OTHER_ERROR,
+            SignResponse::ERROR_CODE_BAD_REQUEST,
+            SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED,
+            SignResponse::ERROR_CODE_DEVICE_INELIGIBLE,
+            SignResponse::ERROR_CODE_TIMEOUT,
+        ];
+
+        if (!in_array($errorCode, $validErrorCodes, true)) {
+            throw new InvalidArgumentException('Device error code is not one of the known error codes');
+        }
+
+        $result = new self(self::STATUS_DEVICE_ERROR);
+        $result->deviceErrorCode = $errorCode;
+
+        return $result;
     }
 
     /**
@@ -97,6 +156,22 @@ final class AuthenticationVerificationResult
     }
 
     /**
+     * @return self
+     */
+    public static function appIdMismatch()
+    {
+        return new self(self::STATUS_APP_ID_MISMATCH);
+    }
+
+    /**
+     * @return self
+     */
+    public static function signCounterTooLow()
+    {
+        return new self(self::STATUS_SIGN_COUNTER_TOO_LOW);
+    }
+
+    /**
      * @param int $status
      */
     private function __construct($status)
@@ -110,6 +185,66 @@ final class AuthenticationVerificationResult
     public function wasSuccessful()
     {
         return $this->status === self::STATUS_SUCCESS;
+    }
+
+    /**
+     * @return Registration|null
+     */
+    public function getRegistration()
+    {
+        if (!$this->wasSuccessful()) {
+            throw new LogicException('The authentication was unsuccessful and the registration data is not available');
+        }
+
+        return $this->registration;
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceReportABadRequest()
+    {
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_BAD_REQUEST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasClientConfigurationUnsupported()
+    {
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_CONFIGURATION_UNSUPPORTED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasKeyHandleUnknownToDevice()
+    {
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_DEVICE_INELIGIBLE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceTimeOut()
+    {
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_TIMEOUT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceReportAnUnknownError()
+    {
+        return $this->didDeviceReportError(SignResponse::ERROR_CODE_OTHER_ERROR);
+    }
+
+    /**
+     * @return bool
+     */
+    public function didDeviceReportAnyError()
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR;
     }
 
     /**
@@ -142,5 +277,30 @@ final class AuthenticationVerificationResult
     public function didPublicKeyDecodingFail()
     {
         return $this->status === self::STATUS_PUBLIC_KEY_DECODING_FAILED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function didntAppIdsMatch()
+    {
+        return $this->status === self::STATUS_APP_ID_MISMATCH;
+    }
+
+    /**
+     * @return bool
+     */
+    public function wasSignCounterTooLow()
+    {
+        return $this->status === self::STATUS_SIGN_COUNTER_TOO_LOW;
+    }
+
+    /**
+     * @param int $errorCode
+     * @return bool
+     */
+    private function didDeviceReportError($errorCode)
+    {
+        return $this->status === self::STATUS_DEVICE_ERROR && $this->deviceErrorCode === $errorCode;
     }
 }

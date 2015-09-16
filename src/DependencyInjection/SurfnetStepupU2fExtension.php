@@ -37,5 +37,9 @@ class SurfnetStepupU2fExtension extends Extension
         $container
             ->getDefinition('surfnet_stepup_u2f.yubico.u2f')
             ->replaceArgument(0, $config['app_id']);
+
+        $container
+            ->getDefinition('surfnet_stepup_u2f.value.app_id')
+            ->replaceArgument(0, $config['app_id']);
     }
 }
