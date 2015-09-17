@@ -56,7 +56,8 @@ final class RegistrationDataConstraintValidator extends ConstraintValidator
         // We navigate over the characters using an offset, determining the string length we expect.
         // The registration data starts with a reserved byte (0x05).
         $offset = self::RESERVED_BYTE_OFFSET;
-        // We then expect the public key.
+        // We then expect the public key. First, load the PUBKEY_LEN constant by auto-loading \u2flib_serverf\U2F.
+        class_exists('u2flib_server\U2F');
         $offset += \u2flib_server\PUBKEY_LEN;
 
         if (!isset($bytes[$offset])) {
