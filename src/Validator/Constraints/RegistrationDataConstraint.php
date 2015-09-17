@@ -25,5 +25,5 @@ use Symfony\Component\Validator\Constraint;
  */
 final class RegistrationDataConstraint extends Constraint
 {
-    public $message = "The registration data in this response is invalid (%reason%)";
+    public $message = 'The registration data in this response is invalid (%reason%)';
 }

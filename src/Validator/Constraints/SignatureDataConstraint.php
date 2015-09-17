@@ -25,5 +25,5 @@ use Symfony\Component\Validator\Constraint;
  */
 final class SignatureDataConstraint extends Constraint
 {
-    public $message = "The signature data in this response is invalid (%reason%)";
+    public $message = 'The signature data in this response is invalid (%reason%)';
 }

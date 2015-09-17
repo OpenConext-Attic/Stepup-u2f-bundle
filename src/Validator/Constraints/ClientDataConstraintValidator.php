@@ -54,7 +54,11 @@ final class ClientDataConstraintValidator extends ConstraintValidator
         }
 
         if (!isset($clientData->challenge)) {
-            $this->context->addViolation($constraint->message, ['%reason%' => 'Challenge not present on client data'], $value);
+            $this->context->addViolation(
+                $constraint->message,
+                ['%reason%' => 'Challenge not present on client data'],
+                $value
+            );
             return;
         }
     }

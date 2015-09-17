@@ -25,5 +25,5 @@ use Symfony\Component\Validator\Constraint;
  */
 final class ClientDataConstraint extends Constraint
 {
-    public $message = "The client data in this response is invalid (%reason%)";
+    public $message = 'The client data in this response is invalid (%reason%)';
 }
