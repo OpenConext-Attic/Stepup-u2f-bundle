@@ -19,20 +19,30 @@
 namespace Surfnet\StepupU2fBundle\Dto;
 
 use JsonSerializable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class RegisterRequest implements JsonSerializable
 {
     /**
+     * @Assert\NotBlank(message="Register request version may not be empty")
+     * @Assert\Type("string", message="Register request version must be a string")
+     *
      * @var string
      */
     public $version;
 
     /**
+     * @Assert\NotBlank(message="Register request challenge may not be empty")
+     * @Assert\Type("string", message="Register request challenge must be a string")
+     *
      * @var string
      */
     public $challenge;
 
     /**
+     * @Assert\NotBlank(message="Register request AppID may not be empty")
+     * @Assert\Type("string", message="Register request AppID must be a string")
+     *
      * @var string
      */
     public $appId;

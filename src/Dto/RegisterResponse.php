@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupU2fBundle\Dto;
 
+use Surfnet\StepupU2fBundle\Validator\Constraints as U2fAssert;
+use Symfony\Component\Validator\Constraints as Assert;
+
 final class RegisterResponse
 {
     /**
@@ -54,17 +57,24 @@ final class RegisterResponse
     const ERROR_CODE_TIMEOUT = 5;
 
     /**
+     * @Assert\NotBlank(message="Register request error code may not be empty")
+     * @Assert\Type("numeric", message="Register request error code must be numeric")
+     *
      * @var numeric|null
      * @see https://fidoalliance.org/specs/fido-u2f-v1.0-nfc-bt-amendment-20150514/fido-u2f-javascript-api.html#error-codes
      */
     public $errorCode;
 
     /**
+     * @U2fAssert\RegistrationDataConstraint
+     *
      * @var string
      */
     public $registrationData;
 
     /**
+     * @U2fAssert\ClientDataConstraint
+     *
      * @var string
      */
     public $clientData;
