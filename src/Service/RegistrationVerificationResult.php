@@ -24,7 +24,7 @@ use Surfnet\StepupU2fBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupU2fBundle\Exception\LogicException;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 final class RegistrationVerificationResult
 {
