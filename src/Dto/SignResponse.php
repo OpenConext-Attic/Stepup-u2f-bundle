@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupU2fBundle\Dto;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Surfnet\StepupU2fBundle\Validator\Constraints as U2fAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class SignResponse
 {

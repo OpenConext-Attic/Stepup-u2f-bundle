@@ -19,6 +19,7 @@
 namespace Surfnet\StepupU2fBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -28,16 +29,16 @@ final class VerifyDeviceAuthenticationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('errorCode', 'hidden', [
+        $builder->add('errorCode', HiddenType::class, [
             'attr' => [ 'data-u2f-sign-response-field' => 'errorCode' ],
         ]);
-        $builder->add('keyHandle', 'hidden', [
+        $builder->add('keyHandle', HiddenType::class, [
             'attr' => [ 'data-u2f-sign-response-field' => 'keyHandle' ],
         ]);
-        $builder->add('signatureData', 'hidden', [
+        $builder->add('signatureData', HiddenType::class, [
             'attr' => [ 'data-u2f-sign-response-field' => 'signatureData' ],
         ]);
-        $builder->add('clientData', 'hidden', [
+        $builder->add('clientData', HiddenType::class, [
             'attr' => [ 'data-u2f-sign-response-field' => 'clientData' ],
         ]);
     }
@@ -64,7 +65,7 @@ final class VerifyDeviceAuthenticationType extends AbstractType
         $view->vars['attr']['data-u2f-sign-request'] = json_encode($options['sign_request']);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'surfnet_stepup_u2f_verify_device_authentication';
     }
