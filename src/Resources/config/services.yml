@@ -9,8 +9,8 @@ services:
     surfnet_stepup_u2f.service.u2f:
         class: Surfnet\StepupU2fBundle\Service\U2fService
         arguments:
-            - @surfnet_stepup_u2f.value.app_id
-            - @surfnet_stepup_u2f.yubico.u2f
+            - "@surfnet_stepup_u2f.value.app_id"
+            - "@surfnet_stepup_u2f.yubico.u2f"
 
     surfnet_stepup_u2f.yubico.u2f:
         class: u2flib_server\U2F
