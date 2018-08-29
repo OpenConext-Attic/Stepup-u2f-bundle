@@ -19,6 +19,7 @@
 namespace Surfnet\StepupU2fBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -28,13 +29,13 @@ final class RegisterDeviceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('errorCode', 'hidden', [
+        $builder->add('errorCode', HiddenType::class, [
             'attr' => [ 'data-u2f-register-response-field' => 'errorCode' ],
         ]);
-        $builder->add('registrationData', 'hidden', [
+        $builder->add('registrationData', HiddenType::class, [
             'attr' => [ 'data-u2f-register-response-field' => 'registrationData' ],
         ]);
-        $builder->add('clientData', 'hidden', [
+        $builder->add('clientData', HiddenType::class, [
             'attr' => [ 'data-u2f-register-response-field' => 'clientData' ],
         ]);
     }
@@ -61,7 +62,7 @@ final class RegisterDeviceType extends AbstractType
         $view->vars['attr']['data-u2f-register-request'] = json_encode($options['register_request']);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'surfnet_stepup_u2f_register_device';
     }
