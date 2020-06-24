@@ -28,9 +28,9 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder;
+        $treeBuilder = new TreeBuilder('surfnet_stepup_u2f');
 
-        $rootNode = $treeBuilder->root('surfnet_stepup_u2f');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
                 ->scalarNode('app_id')
