@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupU2fBundle\Service;
 
+use stdClass;
 use Surfnet\StepupU2fBundle\Dto\RegisterRequest;
 use Surfnet\StepupU2fBundle\Dto\RegisterResponse;
 use Surfnet\StepupU2fBundle\Dto\Registration;
@@ -90,7 +91,7 @@ class U2fService
 
         $yubicoRequest = new YubicoRegisterRequest($request->challenge, $request->appId);
 
-        $yubicoResponse = new \stdClass;
+        $yubicoResponse = new stdClass;
         $yubicoResponse->clientData = $response->clientData;
         $yubicoResponse->registrationData = $response->registrationData;
 
@@ -178,7 +179,7 @@ class U2fService
         $yubicoRequest->appId     = $request->appId;
         $yubicoRequest->keyHandle = $request->keyHandle;
 
-        $yubicoResponse = new \stdClass;
+        $yubicoResponse = new stdClass;
         $yubicoResponse->keyHandle     = $response->keyHandle;
         $yubicoResponse->signatureData = $response->signatureData;
         $yubicoResponse->clientData    = $response->clientData;

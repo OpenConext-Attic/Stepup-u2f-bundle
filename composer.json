@@ -9,12 +9,12 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4|^7",
-        "symfony/config": ">=2.7,<4",
-        "symfony/dependency-injection": ">=2.7,<4",
-        "symfony/form": ">=2.7,<4",
-        "symfony/http-kernel": ">=2.7,<4",
-        "symfony/validator": ">=2.7,<4",
+        "php": "^7",
+        "symfony/config": "^3.4|^4.4",
+        "symfony/dependency-injection": "^3.4|^4.4",
+        "symfony/form": "^3.4|^4.4",
+        "symfony/http-kernel": "^3.4|^4.4",
+        "symfony/validator": "^3.4|^4.4",
         "yubico/u2flib-server": "^0.1.0"
     },
     "require-dev": {
